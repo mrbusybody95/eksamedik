@@ -202,23 +202,39 @@ def _extract_regex(files: list[dict], category: dict) -> dict[str, str]:
     Doc type filtering via optional "doc_types" list.
     
     Priority: doc_types order (first match wins).
+    
+    Pattern format per field:
+      - str  → plain regex, flags: re.I (default)
+      - dict → {"pattern": "...", "dotall": true/false, "doc_types": [...]}
+        dotall=true enables re.S (.* menelan newline), default false
     """
     patterns = category.get("patterns", {})
     doc_types = category.get("doc_types", [])  # optional filter
     
     result: dict[str, str] = {}
     
-    for field_name, pattern in patterns.items():
-        compiled = re.compile(pattern, re.I | re.S)
+    for field_name, pat_spec in patterns.items():
+        # Support both old string format and new dict format
+        if isinstance(pat_spec, dict):
+            pattern = pat_spec["pattern"]
+            use_dotall = pat_spec.get("dotall", False)
+            field_doc_types = pat_spec.get("doc_types", doc_types)
+        else:
+            pattern = pat_spec
+            use_dotall = False
+            field_doc_types = doc_types
+        
+        flags = re.I | (re.S if use_dotall else 0)
+        compiled = re.compile(pattern, flags)
         best_match = None
         best_priority = 999
         
         for f in files:
             # Filter by doc_type if specified
-            if doc_types and f["doc_type"] not in doc_types:
+            if field_doc_types and f["doc_type"] not in field_doc_types:
                 continue
             
-            priority = doc_types.index(f["doc_type"]) if doc_types and f["doc_type"] in doc_types else 99
+            priority = field_doc_types.index(f["doc_type"]) if field_doc_types and f["doc_type"] in field_doc_types else 99
             
             for m in compiled.finditer(f["text"]):
                 if priority < best_priority or (priority == best_priority and best_match is None):
@@ -235,24 +251,101 @@ def _extract_regex(files: list[dict], category: dict) -> dict[str, str]:
     return result
 
 
-def _extract_keyword(files: list[dict], category: dict) -> dict[str, str]:
-    """Generic keyword extractor. For each field, checks if any keyword exists.
+_NEGATION_WORDS = frozenset({
+    "tidak", "tanpa", "negatif", "minus", "absen", "nihil", "kosong",
+    "bukan", "belum", "non",
+})
+_POSITIVE_MARKERS = frozenset({"(+)", "positif", "ada", "terdapat", "ditemukan"})
+_NEGATION_WINDOW = 5  # tokens before/after keyword to check for negation
+
+
+def _check_negation(text_lower: str, keyword: str, window: int = _NEGATION_WINDOW) -> bool:
+    """Check if keyword is negated within a context window.
     
-    Result: "ada" if keyword found, "tidak" if not.
+    Returns True if ALL occurrences of keyword are negated.
+    If ANY occurrence has a positive marker (e.g. "demam (+)"), returns False.
+    
+    Strategy:
+      1. Find all keyword positions in text
+      2. For each, extract N tokens before and after
+      3. If ANY occurrence is unambiguously positive → not negated
+      4. If ALL occurrences are negated → negated
+    """
+    tokens = text_lower.split()
+    kw_lower = keyword.lower()
+    
+    found_positive = False
+    found_negated = False
+    
+    for i, tok in enumerate(tokens):
+        # Check if this token matches the keyword
+        if tok == kw_lower or kw_lower in tok:
+            # Look before keyword for negation
+            start = max(0, i - window)
+            before_tokens = tokens[start:i]
+            after_tokens = tokens[i+1:i+1+window]
+            
+            # Check for positive markers that override (e.g. "demam (+)")
+            has_positive = any(
+                t in _POSITIVE_MARKERS or "(+)" in t
+                for t in after_tokens[:3]  # close positive marker
+            )
+            
+            if has_positive:
+                found_positive = True
+                continue  # this occurrence is positive, check others
+            
+            # Check for negation in "before" window
+            has_negation_before = any(t in _NEGATION_WORDS for t in before_tokens)
+            # Check for negation in "after" window (e.g. "demam tidak ada")
+            has_negation_after = any(t in _NEGATION_WORDS for t in after_tokens)
+            
+            if has_negation_before or has_negation_after:
+                found_negated = True
+    
+    # If any occurrence is positive, keyword is NOT negated overall
+    if found_positive:
+        return False
+    return found_negated
+
+
+def _extract_keyword(files: list[dict], category: dict) -> dict[str, str]:
+    """Generic keyword extractor with word-boundary + negation detection.
+    
+    For each field:
+      1. Check if any keyword exists with \\b word boundaries (no substring false positives)
+      2. If found, check for negation within N-token window
+      3. Negated → "tidak", Positive → "ada", Not found → "tidak"
     """
     keywords_map = category.get("keywords", {})
     
-    # Combine all text
-    all_text = " ".join(f["text"] for f in files).lower()
+    # Combine all text (preserve per-file for context)
+    all_text = " ".join(f["text"] for f in files)
+    all_text_lower = all_text.lower()
     
     result: dict[str, str] = {}
     for field_name, keywords in keywords_map.items():
         found = False
+        negated = False
+        
         for kw in keywords:
-            if kw.lower() in all_text:
+            kw_escaped = re.escape(kw)
+            # Word boundary match — prevents substring false positives
+            # e.g. "stroke" won't match "antistroke" or "strokes" incorrectly
+            pattern = r'\b' + kw_escaped + r'\b'
+            if re.search(pattern, all_text_lower, re.IGNORECASE):
                 found = True
-                break
-        result[field_name] = "ada" if found else "tidak"
+                # Check negation context
+                if _check_negation(all_text_lower, kw):
+                    negated = True
+                else:
+                    negated = False  # positive override if multiple keywords
+                    break  # confirmed positive, stop
+        
+        if found and not negated:
+            result[field_name] = "ada"
+        else:
+            result[field_name] = "tidak"
     
     return result
 

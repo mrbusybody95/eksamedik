@@ -20,6 +20,7 @@ from extraction_engine import (
     _extract_regex,
     _extract_keyword,
     _extract_builtin,
+    _check_negation,
     BUILTIN_EXTRACTORS,
     PROFILES_DIR,
     _CORE_AVAILABLE,
@@ -339,3 +340,168 @@ class TestProfileJSON:
                 if cat_def.get("type") == "keyword":
                     assert "keywords" in cat_def, \
                         f"{fp.name}/{cat_name}: keyword type requires 'keywords' field"
+
+
+# ================================================================
+# TASK 3: Negation Detection & Word Boundary
+# ================================================================
+
+class TestNegationDetection:
+    """Test negation detection for keyword extraction."""
+    
+    def test_negasi_tidak_ada_demam(self):
+        """'tidak ada demam' → negated (return 'tidak')"""
+        files = [{"text": "Pasien tidak ada demam selama perawatan", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "tidak"
+    
+    def test_negasi_tanpa_demam(self):
+        """'tanpa demam' → negated"""
+        files = [{"text": "Tanpa demam, tanpa sesak", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "tidak"
+    
+    def test_positif_demam_plus(self):
+        """'demam (+)' → positive"""
+        files = [{"text": "Riwayat: Demam (+) sejak 3 hari", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "ada"
+    
+    def test_positif_bare_keyword(self):
+        """'Pasien dengan demam tinggi' → positive (no negation)"""
+        files = [{"text": "Pasien dengan demam tinggi 39.5°C", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "ada"
+    
+    def test_negasi_belum_ada(self):
+        """'belum ada demam' → negated"""
+        files = [{"text": "Sampai saat ini belum ada demam", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "tidak"
+    
+    def test_negasi_tidak_tampak_infiltrat(self):
+        """'Tidak tampak infiltrat' → negated"""
+        files = [{"text": "Foto Thorax: Tidak tampak infiltrat di kedua lapang paru", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_infiltrat"], "keywords": {"has_infiltrat": ["infiltrat"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_infiltrat"] == "tidak"
+    
+    def test_negasi_overridden_by_positive_later(self):
+        """Multiple occurrences: first negated, second positive → ada"""
+        files = [{"text": "Tidak ada demam saat masuk. Hari ke-2 demam (+)", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_demam"], "keywords": {"has_demam": ["demam"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_demam"] == "ada"
+
+
+class TestWordBoundary:
+    """Test that keyword matching uses word boundaries (no substring false positives)."""
+    
+    def test_no_substring_false_positive(self):
+        """'stroke' should NOT match inside 'antistroke' or 'microstroke' etc."""
+        files = [{"text": "Pasien mendapat terapi antistroke profilaksis", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_stroke"], "keywords": {"has_stroke": ["stroke"]}}
+        result = _extract_keyword(files, cat)
+        # "antistroke" contains "stroke" but \b should NOT match
+        assert result["has_stroke"] == "tidak", \
+            "False positive: 'stroke' matched inside 'antistroke'"
+    
+    def test_stroke_as_standalone_word(self):
+        """'Stroke' as standalone word → match"""
+        files = [{"text": "Diagnosis: Stroke Infark", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_stroke"], "keywords": {"has_stroke": ["stroke"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_stroke"] == "ada"
+    
+    def test_hipertensi_word_boundary(self):
+        """'hipertensi' matches standalone, not in compound words"""
+        files = [{"text": "Riwayat Hipertensi (+)", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["has_ht"], "keywords": {"has_ht": ["hipertensi"]}}
+        result = _extract_keyword(files, cat)
+        assert result["has_ht"] == "ada"
+    
+    def test_icu_word_boundary(self):
+        """Short keyword 'icu' should still match standalone"""
+        files = [{"text": "Pasien dirawat di ICU", "doc_type": "resume", "source_file": "r.txt"}]
+        cat = {"fields": ["setting_icu"], "keywords": {"setting_icu": ["icu"]}}
+        result = _extract_keyword(files, cat)
+        assert result["setting_icu"] == "ada"
+
+
+class TestRegexDotallOptIn:
+    """Test that re.S (dotall) is now opt-in per pattern, not default."""
+    
+    def test_regex_default_no_dotall(self):
+        """Without dotall flag, .* should NOT match across newlines."""
+        text = "Diagnosis:\nStroke Infark\nKesimpulan: Baik"
+        files = [{"text": text, "doc_type": "resume", "source_file": "r.txt"}]
+        
+        # Pattern uses .* to capture after "Diagnosis:" up to newline
+        cat = {
+            "fields": ["dx"],
+            "patterns": {
+                "dx": r"Diagnosis:\s*(.+)"
+            }
+        }
+        result = _extract_regex(files, cat)
+        # Without re.S, .* stops at newline → captures "Stroke Infark"
+        assert "Stroke Infark" in result.get("dx", "")
+        # Should NOT swallow the next line
+        assert "Kesimpulan" not in result.get("dx", "")
+    
+    def test_regex_dotall_explicit_true(self):
+        """With dotall=true, .* matches across newlines."""
+        text = "Diagnosis:\nStroke Infark\nKesimpulan: Baik"
+        files = [{"text": text, "doc_type": "resume", "source_file": "r.txt"}]
+        
+        cat = {
+            "fields": ["dx"],
+            "patterns": {
+                "dx": {
+                    "pattern": r"Diagnosis:\s*(.+)",
+                    "dotall": True,
+                }
+            }
+        }
+        result = _extract_regex(files, cat)
+        # With re.S, .* matches across newlines → captures everything after
+        val = result.get("dx", "")
+        assert "Stroke Infark" in val
+        # Now it SHOULD swallow the next line
+        assert "Kesimpulan" in val
+    
+    def test_regex_dotall_false_explicit(self):
+        """With dotall=false (explicit), same as default."""
+        text = "GCS E4M6V5 = 15\nTD 180/100"
+        files = [{"text": text, "doc_type": "resume", "source_file": "r.txt"}]
+        
+        cat = {
+            "fields": ["gcs"],
+            "patterns": {
+                "gcs": {
+                    "pattern": r"GCS\s*E\d+M\d+V\d+\s*=\s*(\d{1,2})",
+                    "dotall": False,
+                }
+            }
+        }
+        result = _extract_regex(files, cat)
+        assert result["gcs"] == "15"
+    
+    def test_regex_string_format_backward_compatible(self):
+        """Old string-format patterns still work (backward compatibility)."""
+        text = "Diagnosis: Stroke Infark"
+        files = [{"text": text, "doc_type": "resume", "source_file": "r.txt"}]
+        
+        cat = {
+            "fields": ["dx"],
+            "patterns": {
+                "dx": r"(?i)Diagnosis:\s*(.+)"
+            }
+        }
+        result = _extract_regex(files, cat)
+        assert "Stroke Infark" in result.get("dx", "")
