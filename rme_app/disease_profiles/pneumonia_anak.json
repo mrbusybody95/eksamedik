@@ -1,0 +1,203 @@
+{
+  "_comment": "Disease Profile: Pneumonia Anak — BP/Bronkopneumonia/Bronkhopneumonia",
+  "_version": "1.0",
+
+  "name": "Pneumonia Anak",
+  "version": "1.0",
+  "description": "Ekstraksi data pneumonia anak (bronkopneumonia/bronkhopneumonia/BP). WHO classification, IMCI severity, tanda bahaya, oksigen.",
+  "drug_profile": "pneumonia.json",
+
+  "categories": {
+    "Demografi": {
+      "fields": ["demo_age", "demo_gender", "jenis_kelamin"],
+      "type": "builtin",
+      "extractor": "demographics",
+      "desc": "Usia + Jenis Kelamin"
+    },
+
+    "Diagnosis": {
+      "fields": ["diagnosis_utama", "diagnosis_sekunder", "pneumonia_kategori", "icd_code"],
+      "type": "regex",
+      "patterns": {
+        "diagnosis_utama": "(?i)diagnos[aei]\\s*(?:utama)?\\s*[:=]?\\s*(.{5,200})",
+        "diagnosis_sekunder": "(?i)diagnos[aei]\\s*(?:sekunder|tambahan|lain)\\s*[:=]?\\s*(.{5,200})",
+        "pneumonia_kategori": "(?i)(bronkopneumoni|bronkhopneumoni|broncho?pneumoni|pneumonia\\s*(?:berat|sedang|ringan)|CAP|community\\s*acquired|aspirasi|viral|bakterial)",
+        "icd_code": "(?i)J18\\.[0-9]|J15\\.[0-9]|J14|J13|J12\\.[0-9]|J18\\.0"
+      },
+      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "desc": "Diagnosis pneumonia anak + kategori + ICD"
+    },
+
+    "Klasifikasi WHO": {
+      "fields": [
+        "who_kategori", "who_tanda_bahaya", "who_pneumonia",
+        "who_pneumonia_berat", "who_very_severe"
+      ],
+      "type": "regex",
+      "patterns": {
+        "who_kategori": "(?i)(?:WHO|IMCI)\\s*(?:klasifikasi|classification|kategori)?\\s*[:=]?\\s*(.{3,100})",
+        "who_tanda_bahaya": "(?i)(tanda\\s*bahaya|danger\\s*sign|tidak\\s*minum|tidak\\s*makan|muntah|kejang|letargi|stridor)",
+        "who_pneumonia": "(?i)pneumonia\\s*(?:tanpa|dengan)?\\s*(?:tanda)?",
+        "who_pneumonia_berat": "(?i)pneumonia\\s*berat|severe\\s*pneumonia",
+        "who_very_severe": "(?i)very\\s*severe|sangat\\s*berat|sangat\\s*parah"
+      },
+      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "desc": "Klasifikasi WHO/IMCI: pneumonia, pneumonia berat, very severe disease"
+    },
+
+    "Vital Sign": {
+      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "type": "builtin",
+      "extractor": "vitals",
+      "desc": "TD, HR, RR, Suhu, SpO2"
+    },
+
+    "Tanda Pernapasan": {
+      "fields": [
+        "napas_cuping", "retraksi", "sianosis", "stridor",
+        "merintih", "takipne", "rr_value", "grunting"
+      ],
+      "type": "regex",
+      "patterns": {
+        "napas_cuping": "(?i)(?:cuping|flaring)\\s*(?:hidung|nasal)\\s*[:=]?\\s*(ada|positif|\\+|ya|tidak|negatif|-)?",
+        "retraksi": "(?i)retraksi\\s*(?:dinding)?\\s*(?:dada|thorax)?\\s*[:=]?\\s*(ada|positif|\\+|ya|ringan|sedang|berat|tidak|negatif|-)?",
+        "sianosis": "(?i)sianosis\\s*[:=]?\\s*(ada|sentral|perifer|positif|\\+|ya|tidak|negatif|-)?",
+        "stridor": "(?i)stridor\\s*[:=]?\\s*(ada|inspirasi|ekspirasi|biphasik|positif|\\+|ya|tidak|negatif|-)?",
+        "merintih": "(?i)(?:merintih|wheezing|wheez)\\s*[:=]?\\s*(ada|positif|\\+|ya|tidak|negatif|-)?",
+        "takipne": "(?i)takipn[ei][a]?\\s*[:=]?\\s*(ada|positif|\\+|ya|tidak|negatif|-)?",
+        "rr_value": "(?i)(?:RR|frekuensi\\s*napas|respiratory\\s*rate)\\s*[:=]?\\s*(\\d{1,3})",
+        "grunting": "(?i)grunting\\s*[:=]?\\s*(ada|positif|\\+|ya|tidak|negatif|-)?"
+      },
+      "doc_types": ["cppt_igd", "cppt_ranap"],
+      "desc": "Tanda pernapasan khusus anak: retraksi, cuping, sianosis, wheezing, grunting"
+    },
+
+    "Laboratorium": {
+      "fields": [
+        "lab_hb", "lab_leukosit", "lab_trombosit", "lab_gds",
+        "lab_crp", "lab_pct", "lab_albumin"
+      ],
+      "type": "builtin",
+      "extractor": "lab_values",
+      "desc": "HB, leukosit, trombosit, GDS, CRP, procalcitonin, albumin"
+    },
+
+    "Thorax": {
+      "fields": ["thorax_documented", "thorax_kesan", "thorax_tanggal"],
+      "type": "builtin",
+      "extractor": "thorax",
+      "desc": "Foto thorax AP/PA + kesan + tanggal"
+    },
+
+    "Demam": {
+      "fields": ["demam_saat_masuk", "demam_selama_rawat", "suhu_tertinggi"],
+      "type": "builtin",
+      "extractor": "demam",
+      "desc": "Tracking demam"
+    },
+
+    "Medikasi": {
+      "fields": [
+        "med_antibiotik", "med_bronkodilator", "med_kortikosteroid",
+        "med_mukolitik", "med_antipiretik", "med_antivirus",
+        "med_antibiotik_detail", "med_bronkodilator_detail",
+        "med_kortikosteroid_detail", "med_mukolitik_detail",
+        "med_antipiretik_detail", "med_antivirus_detail"
+      ],
+      "type": "builtin",
+      "extractor": "medications",
+      "desc": "Antibiotik, bronkodilator, kortikosteroid, mukolitik, antipiretik, antivirus + detail"
+    },
+
+    "Oksigen & Ventilasi": {
+      "fields": ["oksigen_terapi", "oksigen_lpm", "hfnc", "niv", "ventilasi_mekanik"],
+      "type": "regex",
+      "patterns": {
+        "oksigen_terapi": "(?i)(?:oksigen|O2)\\s*(?:terapi|therap[yi])?\\s*[:=]?\\s*(.{3,80})",
+        "oksigen_lpm": "(?i)(\\d+(?:\\.\\d+)?)\\s*(?:lpm|L/m|liter)",
+        "hfnc": "(?i)(HFNC|high\\s*flow|high-flow)",
+        "niv": "(?i)(NIV|NPPV|BiPAP|CPAP|non-?invasif)",
+        "ventilasi_mekanik": "(?i)(ventilasi\\s*mekanik|ventilator|intubasi|ETT)"
+      },
+      "doc_types": ["cppt_igd", "cppt_ranap"],
+      "desc": "Oksigen, HFNC, NIV, ventilasi mekanik"
+    },
+
+    "Status Gizi": {
+      "fields": ["status_gizi", "bb_u", "tb_u", "bb_tb", "z_score"],
+      "type": "regex",
+      "patterns": {
+        "status_gizi": "(?i)(?:status\\s*gizi|nutritional\\s*status)\\s*[:=]?\\s*(.{3,100})",
+        "bb_u": "(?i)(?:BB/U|berat\\s*badan.*usia|W/A|weight.*age)\\s*[:=]?\\s*(.{3,50})",
+        "tb_u": "(?i)(?:TB/U|tinggi\\s*badan.*usia|H/A|height.*age|length.*age)\\s*[:=]?\\s*(.{3,50})",
+        "bb_tb": "(?i)(?:BB/TB|W/H|weight.*height|weight.*length)\\s*[:=]?\\s*(.{3,50})",
+        "z_score": "(?i)(?:z[-\\s]?score|ZS|SDS)\\s*[:=]?\\s*([-+]?\\d+\\.?\\d*)"
+      },
+      "doc_types": ["resume", "cppt_igd"],
+      "desc": "Status gizi anak: BB/U, TB/U, BB/TB, z-score"
+    },
+
+    "Faktor Risiko": {
+      "fields": [
+        "rf_prematur", "rf_bblr", "rf_imunisasi_tidak_lengkap",
+        "rf_asap_rokok", "rf_daycare", "rf_gizi_buruk",
+        "rf_penyakit_paru_kronis", "rf_imunokompromais",
+        "rpd_text"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "rf_prematur": ["prematur", "premature", "preterm", "kurang bulan"],
+        "rf_bblr": ["bblr", "berat badan lahir rendah", "lbw", "low birth weight"],
+        "rf_imunisasi_tidak_lengkap": ["imunisasi tidak lengkap", "imunisasi belum", "belum imunisasi", "tidak imunisasi"],
+        "rf_asap_rokok": ["asap rokok", "perokok pasif", "pasif smoking", "terpapar rokok"],
+        "rf_daycare": ["daycare", "penitipan", "tempat penitipan"],
+        "rf_gizi_buruk": ["gizi buruk", "malnutrisi", "malnourish", "kurus", "wasting", "stunting", "marasmus", "kwashiorkor"],
+        "rf_penyakit_paru_kronis": ["paru kronis", "bronkiektasis", "bpd", "bronchopulmonary dysplasia"],
+        "rf_imunokompromais": ["immunocompromised", "imunokompromais", "hiv", "kemoterapi"]
+      },
+      "desc": "Faktor risiko pneumonia anak"
+    },
+
+    "Tindakan Klinis": {
+      "fields": [
+        "act_oksigen_terapi", "act_nebulisasi", "act_fisioterapi_dada",
+        "act_rawat_icu_hcu", "act_konsul_anak", "act_konsul_gizi",
+        "act_edukasi_orangtua", "act_pengambilan_sputum"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "act_oksigen_terapi": ["oksigen terapi", "o2 terapi", "oxygen", "nasal kanul", "simple mask", "hood"],
+        "act_nebulisasi": ["nebul", "nebulisasi", "nebulizer", "inhalasi"],
+        "act_fisioterapi_dada": ["fisioterapi dada", "chest physiotherapy", "cpt", "fisioterapi napas"],
+        "act_rawat_icu_hcu": ["icu", "picu", "hcu", "intensive care"],
+        "act_konsul_anak": ["konsul anak", "konsul pediatri", "pediatri", "dokter anak", "neonatolog"],
+        "act_konsul_gizi": ["konsul gizi", "gizi", "nutrisionis"],
+        "act_edukasi_orangtua": ["edukasi orangtua", "edukasi ibu", "konseling orangtua", "penjelasan ke"],
+        "act_pengambilan_sputum": ["pengambilan sputum", "ambil sputum"]
+      },
+      "desc": "Tindakan klinis pneumonia anak"
+    },
+
+    "Outcome": {
+      "fields": [
+        "cara_keluar", "kondisi_pulang", "rencana_kontrol",
+        "lama_rawat_hari", "keterangan_pulang"
+      ],
+      "type": "builtin",
+      "extractor": "outcome",
+      "desc": "Cara keluar, kondisi pulang, kontrol, LOS, keterangan"
+    },
+
+    "Pemeriksaan Fisik": {
+      "fields": ["fisik_kesadaran", "fisik_bb", "fisik_tb", "fisik_lingkar_kepala"],
+      "type": "keyword",
+      "keywords": {
+        "fisik_kesadaran": ["kesadaran", "compos mentis", "alert", "letargi", "gcs"],
+        "fisik_bb": ["bb", "berat badan"],
+        "fisik_tb": ["tb", "tinggi badan", "panjang badan"],
+        "fisik_lingkar_kepala": ["lingkar kepala", "lk", "head circumference"]
+      },
+      "desc": "Pemeriksaan fisik anak: kesadaran, BB, TB, LK"
+    }
+  }
+}

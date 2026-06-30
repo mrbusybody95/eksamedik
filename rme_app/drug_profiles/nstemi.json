@@ -1,0 +1,105 @@
+{
+  "_note": "Drug Profile: NSTEMI — antiplatelet, antikoagulan, statin, beta-blocker, ACEi/ARB, nitrat.",
+  "med_antiplatelet": [
+    "aspirin", "asetosal", "acetylsalicylic", "ascardia",
+    "tromboaspilet", "thromboaspilet", "aspilet",
+    "thrombo aspilet", "cardio aspirin",
+    "clopidogrel", "plavix", "tromplat", "coplavix", "grepid",
+    "ticagrelor", "brilinta", "possia",
+    "prasugrel", "efient",
+    "cilostazol", "pletal",
+    "antiplatelet", "anti platelet", "anti agregasi", "antiagregasi", "DAPT"
+  ],
+  "med_antikoagulan": [
+    "warfarin", "notisil", "simarc", "coumadin",
+    "rivaroxaban", "xarelto",
+    "apixaban", "eliquis",
+    "dabigatran", "pradaxa",
+    "edoxaban", "lixiana",
+    "heparin", "heparin natrium", "heparin sodium",
+    "enoxaparin", "clexane", "fragmin",
+    "fondaparinux", "arixtra",
+    "bivalirudin",
+    "antikoagulan", "anti koagulan"
+  ],
+  "med_statin": [
+    "simvastatin", "zocor", "simvador",
+    "atorvastatin", "lipitor", "atorvastin",
+    "rosuvastatin", "crestor", "rosuvastin",
+    "pravastatin", "pravachol",
+    "fluvastatin", "lescol",
+    "pitavastatin", "livalo",
+    "lovastatin", "mevinolin",
+    "statin"
+  ],
+  "med_beta_blocker": [
+    "bisoprolol", "concor", "bisop",
+    "metoprolol", "seloken", "lopressor", "betaloc",
+    "carvedilol", "dilatrend", "carvedilo",
+    "atenolol", "tenormin",
+    "propranolol", "inderal",
+    "nebivolol", "nebilet",
+    "beta blocker", "beta-blocker", "β-blocker"
+  ],
+  "med_acei_arb": [
+    "captopril", "kapoten",
+    "lisinopril", "zestril",
+    "enalapril", "renitec", "enalap",
+    "ramipril", "tritace", "altace",
+    "perindopril", "coversyl", "acertil",
+    "candesartan", "atacand",
+    "valsartan", "diovan",
+    "telmisartan", "micardis",
+    "losartan", "cozaar", "losart",
+    "irbesartan", "aprovel",
+    "olmesartan", "olmetec",
+    "sacubitril", "entresto", "valsartan sacubitril",
+    "ACE inhibitor", "ACEi", "ARB", "inhibitor angiotensin"
+  ],
+  "med_nitrat": [
+    "nitrogliserin", "nitroglycerin", "nitrolingual", "glyceryl trinitrate", "GTN",
+    "isosorbide dinitrate", "ISDN", "isordil",
+    "isosorbide mononitrate", "ISMN", "imdur", "monosan",
+    "nitrat"
+  ],
+  "med_ppi": [
+    "omeprazole", "omeprazol",
+    "pantoprazole", "pantoprazol",
+    "lansoprazole", "lansoprazol",
+    "esomeprazole", "esomeprazol",
+    "rabeprazole",
+    "ranitidin", "ranitidine",
+    "famotidine", "famotidin",
+    "ppi"
+  ],
+  "med_diuretik": [
+    "furosemide", "furosemid", "lasix",
+    "hydrochlorothiazide", "hct", "esidrex",
+    "spironolactone", "spironolakton", "aldactone",
+    "torasemide", "torsemide", "diumide",
+    "diuretik"
+  ],
+  "med_analgesik": [
+    "morphine", "morfin", "sulfas morphin",
+    "fentanyl", "fentanil",
+    "tramadol", "tramal",
+    "parasetamol", "paracetamol",
+    "ketorolac", "ketorolak",
+    "analgesik"
+  ],
+  "med_obat_jantung": [
+    "digoxin", "digoksin",
+    "amiodarone", "cordarone",
+    "ivabradine", "coralan", "corlanor",
+    "obat jantung"
+  ],
+  "med_antikoagulan_detail": [],
+  "med_antiplatelet_detail": [],
+  "med_statin_detail": [],
+  "med_beta_blocker_detail": [],
+  "med_acei_arb_detail": [],
+  "med_nitrat_detail": [],
+  "med_ppi_detail": [],
+  "med_diuretik_detail": [],
+  "med_analgesik_detail": []
+}

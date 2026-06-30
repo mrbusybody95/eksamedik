@@ -1,0 +1,114 @@
+{
+  "_note": "Drug Profile: CKD — ESA, besi, MBD drugs, antihipertensi, diuretik.",
+  "med_esa": [
+    "erythropoietin", "epoetin", "epo", "eprex", "erythropoetin alfa",
+    "darbepoetin", "aranesp", "nesp",
+    "ESA", "erythropoiesis stimulating agent"
+  ],
+  "med_besi": [
+    "besi", "iron", "ferro", "ferrous",
+    "ferrous sulfat", "ferrous sulfate", "ferrovit",
+    "ferrous fumarat", "ferrous fumarate",
+    "sucrose iron", "iron sucrose", "venofer",
+    "ferric carboxymaltose", "injectafer",
+    "iron dextran",
+    "sodium feredetate", "syrinex"
+  ],
+  "med_kalsium_karbonat": [
+    "kalsium karbonat", "calcium carbonate", "ca co3",
+    "kalsium asetat", "calcium acetate", "phoslo",
+    "kalsium sitrat", "calcium citrate",
+    "kalsium", "calcium"
+  ],
+  "med_sevelamer": [
+    "sevelamer", "renagel", "renvela",
+    "kalsium asetat", "phoslo",
+    "lanthanum", "fosrenol",
+    "sucroferric oxyhydroxide", "velphoro",
+    "binder fosfat", "phosphate binder"
+  ],
+  "med_vitamin_d": [
+    "kalsitriol", "calcitriol", "rocaltrol",
+    "alfakalsidol", "alfacalcidol", "onealpha",
+    "vitamin d", "vit d", "cholecalciferol",
+    "ergocalciferol", "vitamin d2",
+    "paricalcitol", "zemplar"
+  ],
+  "med_antihipertensi": [
+    "amlodipine", "amlodipin", "norvask",
+    "nifedipine", "adalat",
+    "captopril", "kapoten",
+    "lisinopril", "zestril",
+    "enalapril", "renitec",
+    "ramipril", "tritace",
+    "perindopril", "coversyl",
+    "candesartan", "atacand",
+    "valsartan", "diovan",
+    "telmisartan", "micardis",
+    "losartan", "cozaar",
+    "bisoprolol", "concor",
+    "metoprolol", "seloken",
+    "carvedilol", "dilatrend",
+    "atenolol", "tenormin",
+    "doxazosin", "cardura",
+    "clonidine", "klonidin", "catapres",
+    "minoxidil",
+    "natrium nitroprusside",
+    "nicardipine", "loxen",
+    "antihipertensi"
+  ],
+  "med_diuretik": [
+    "furosemide", "furosemid", "lasix",
+    "torasemide", "torsemide", "diumide",
+    "hydrochlorothiazide", "hct", "esidrex",
+    "spironolactone", "spironolakton", "aldactone",
+    "amilorida", "amiloride",
+    "mannitol", "manitol",
+    "diuretik"
+  ],
+  "med_antidiabetes": [
+    "metformin", "glukofag", "glucoformin",
+    "glibenclamide", "daonil",
+    "glimepiride", "amaryl",
+    "gliclazide", "diamicron",
+    "insulin", "insulin glargine", "lantus", "novorapid", "actrapid", "mixtard",
+    "saxagliptin", "sitaagliptin", "sitagliptin", "januvia",
+    "empagliflozin", "jardiance",
+    "dapagliflozin", "forxiga",
+    "canagliflozin", "invokana",
+    "pioglitazone", "actos",
+    "antidiabetes", "antidiabetik", "OAD", "OHA"
+  ],
+  "med_statin": [
+    "simvastatin", "zocor",
+    "atorvastatin", "lipitor",
+    "rosuvastatin", "crestor",
+    "pravastatin",
+    "fluvastatin", "lescol",
+    "statin"
+  ],
+  "med_antibiotik": [
+    "ceftriaxone", "ceftriaxon", "seftriakson",
+    "cefotaxime", "cefotaxim", "sefotaksim",
+    "cefixime", "cefixim", "sefiksim",
+    "cefuroxime", "cefuroxim", "sefuroksim",
+    "amoxicillin", "amoksisilin",
+    "ciprofloxacin", "siprofloksasin",
+    "levofloxacin", "levofloksasin",
+    "meropenem", "imipenem",
+    "vancomycin", "vankomisin",
+    "piperacillin tazobactam", "piperasilin tazobaktam",
+    "gentamicin", "gentamisin",
+    "clindamycin", "klindamisin",
+    "metronidazole", "metronidazol",
+    "cotrimoxazole", "kotrimoksazol",
+    "azithromycin", "azitromisin",
+    "antibiotik"
+  ],
+  "med_antikoagulan": [
+    "heparin", "heparin natrium",
+    "enoxaparin", "clexane", "fragmin",
+    "warfarin", "simarc",
+    "antikoagulan"
+  ]
+}

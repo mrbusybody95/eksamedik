@@ -1,0 +1,93 @@
+{
+  "_note": "Drug Profile: Pneumonia — shared untuk dewasa + anak. Edit bebas.",
+  "med_antibiotik": [
+    "amoksisilin", "amoxicillin", "amoxsan", "amoclav", "amoxicillin clavulanat",
+    "amoksisilin asam klavulanat", "augmentin",
+    "ampisilin", "ampicillin", "ampisilin sulbaktam", "ampicillin sulbactam", "ampisul", "sulbaktam",
+    "ceftriaxone", "ceftriaxon", "seftriakson",
+    "cefotaxime", "cefotaxim", "cefotaksim", "sefotaksim",
+    "cefuroxime", "cefuroxim", "sefuroksim",
+    "cefixime", "cefixim", "sefiksim",
+    "cefpodoxime", "sefpodoksim",
+    "cefepime", "cefepim", "sefepim",
+    "ceftazidime", "ceftazidim", "seftazidim",
+    "cefazolin", "sefazolin",
+    "cefadroxil", "cefadroksil", "sefadroksil",
+    "ciprofloxacin", "siprofloksasin",
+    "levofloxacin", "levofloksasin",
+    "moxifloxacin", "moksifloksasin",
+    "azithromycin", "azitromisin",
+    "erythromycin", "eritromisin",
+    "clarithromycin", "klaritromisin",
+    "clindamycin", "klindamisin",
+    "piperacillin tazobactam", "piperasilin tazobaktam", "tazobactam",
+    "penicillin g", "penisilin g",
+    "vancomycin", "vankomisin",
+    "linezolid",
+    "meropenem", "imipenem",
+    "gentamicin", "gentamisin",
+    "amikacin", "amikasin",
+    "kloramfenikol", "chloramphenicol",
+    "doxycycline", "doksisiklin", "tetrasiklin",
+    "cotrimoxazole", "kotrimoksazol",
+    "metronidazole", "metronidazol", "flagyl",
+    "antibiotik", "anti biotik"
+  ],
+  "med_bronkodilator": [
+    "salbutamol", "ventolin",
+    "ipratropium", "kombivent", "atrovent",
+    "teofilin", "theophylline",
+    "formoterol", "foradil",
+    "salmeterol", "seretide",
+    "fenoterol", "berotec",
+    "bronkodilator"
+  ],
+  "med_kortikosteroid": [
+    "dexamethasone", "deksametason",
+    "methylprednisolone", "metilprednisolon",
+    "prednison", "prednisone", "prednisolon",
+    "hidrokortison", "hydrocortisone",
+    "budesonide", "budesonid", "pulmicort",
+    "fluticasone", "flutikason",
+    "kortikosteroid"
+  ],
+  "med_mukolitik": [
+    "ambroksol", "ambroxol", "mucosolvan",
+    "bromhexine", "bromheksin", "bisolvon",
+    "asetilsistein", "acetylcysteine", "nac", "fluimucil",
+    "karbosistein", "carbocisteine",
+    "guaifenesin", "glycerin guaiacolate",
+    "mukolitik", "mukolitik ekspektoran"
+  ],
+  "med_antipiretik": [
+    "parasetamol", "paracetamol", "acetaminophen", "sanmol", "panadol", "tylenol",
+    "ibuprofen", "bufen", "proris", "motrin",
+    "asam mefenamat", "mefenamic acid", "ponstan",
+    "antipiretik"
+  ],
+  "med_antivirus": [
+    "oseltamivir", "tamiflu",
+    "asiklovir", "acyclovir",
+    "favipiravir", "avigan",
+    "remdesivir",
+    "antivirus"
+  ],
+  "med_ppi": [
+    "omeprazole", "omeprazol",
+    "pantoprazole", "pantoprazol",
+    "lansoprazole", "lansoprazol",
+    "esomeprazole", "esomeprazol",
+    "rabeprazole",
+    "ranitidin", "ranitidine",
+    "famotidine", "famotidin",
+    "ppi"
+  ],
+  "med_diuretik": [
+    "furosemide", "furosemid", "lasix",
+    "hydrochlorothiazide", "hct", "esidrex",
+    "spironolactone", "spironolakton", "aldactone",
+    "torasemide", "torsemide", "diumide",
+    "mannitol", "manitol",
+    "diuretik"
+  ]
+}

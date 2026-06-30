@@ -1,0 +1,255 @@
+{
+  "_comment": "Disease Profile: CKD — Chronic Kidney Disease / Gagal Ginjal Kronis",
+  "_version": "1.0",
+
+  "name": "CKD",
+  "version": "1.0",
+  "description": "Ekstraksi data CKD (Chronic Kidney Disease) / Gagal Ginjal Kronis. Staging CKD, eGFR, dialisis, komplikasi MBD, anemia renal.",
+  "drug_profile": "ckd.json",
+
+  "categories": {
+    "Demografi": {
+      "fields": ["demo_age", "demo_gender", "jenis_kelamin"],
+      "type": "builtin",
+      "extractor": "demographics",
+      "desc": "Usia + Jenis Kelamin"
+    },
+
+    "Diagnosis": {
+      "fields": ["diagnosis_utama", "diagnosis_sekunder", "ckd_stadium", "ckd_etiologi", "icd_code"],
+      "type": "regex",
+      "patterns": {
+        "diagnosis_utama": "(?i)diagnos[aei]\\s*(?:utama)?\\s*[:=]?\\s*(.{5,200})",
+        "diagnosis_sekunder": "(?i)diagnos[aei]\\s*(?:sekunder|tambahan|lain)\\s*[:=]?\\s*(.{5,200})",
+        "ckd_stadium": "(?i)(?:CKD|GGK|gagal\\s*ginjal\\s*kronis)\\s*(?:stadium|stage)?\\s*[:=]?\\s*(stadium\\s*[IVX1-5]+|stage\\s*[IVX1-5]+|[IVX]+|[1-5])",
+        "ckd_etiologi": "(?i)(?:etiologi|penyebab|cause)\\s*(?:CKD|GGK)?\\s*[:=]?\\s*(.{3,100})",
+        "icd_code": "(?i)N18\\.[0-9]|N19|N18|E11\\.2|I12"
+      },
+      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "desc": "Diagnosis CKD + stadium + etiologi + ICD"
+    },
+
+    "Vital Sign": {
+      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "type": "builtin",
+      "extractor": "vitals",
+      "desc": "TD, HR, RR, Suhu, SpO2"
+    },
+
+    "Fungsi Ginjal": {
+      "fields": [
+        "egfr_value", "egfr_kategori", "kreatinin_value",
+        "ureum_value", "bun_value", "cystatin_c",
+        "proteinuria", "albuminuria", "gfr_value"
+      ],
+      "type": "regex",
+      "patterns": {
+        "egfr_value": "(?i)(?:eGFR|GFR[-\\s]?estimasi|estimasi\\s*GFR)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mL|min|mL/min/1\\.73|mL/min)?",
+        "egfr_kategori": "(?i)(?:eGFR|GFR)\\s*.*?(?:kategori|category|stage)\\s*[:=]?\\s*(.{3,50})",
+        "kreatinin_value": "(?i)(?:kreatinin|creatinine|Cr)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mg/dL|mg|umol|µmol)?",
+        "ureum_value": "(?i)(?:ureum|BUN|urea|blood\\s*urea)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mg/dL|mg|mmol)?",
+        "bun_value": "(?i)(?:BUN|blood\\s*urea\\s*nitrogen)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)",
+        "cystatin_c": "(?i)(?:cystatin|sistatin)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)",
+        "proteinuria": "(?i)(?:proteinuria|protein.*urin|urin.*protein|dipstick.*protein)\\s*[:=]?\\s*(.{3,50})",
+        "albuminuria": "(?i)(?:albuminuria|albumin.*urin|urin.*albumin|ACR|UACR)\\s*[:=]?\\s*(.{3,50})",
+        "gfr_value": "(?i)(?:^|\\s)GFR\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mL/min)?"
+      },
+      "doc_types": ["lab", "cppt_ranap", "resume"],
+      "desc": "eGFR, kreatinin, ureum, BUN, cystatin C, proteinuria, albuminuria"
+    },
+
+    "Elektrolit & ABG": {
+      "fields": [
+        "elek_natrium", "elek_kalium", "elek_klorida",
+        "elek_bikarbonat", "elek_kalsium", "elek_fosfor",
+        "abg_ph", "abg_pco2", "abg_hco3", "abg_be"
+      ],
+      "type": "regex",
+      "patterns": {
+        "elek_natrium": "(?i)(?:natrium|Na|sodium)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mEq|mmol|meq)?",
+        "elek_kalium": "(?i)(?:kalium|K|potassium)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mEq|mmol|meq)?",
+        "elek_klorida": "(?i)(?:klorida|Cl|chloride)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mEq|mmol|meq)?",
+        "elek_bikarbonat": "(?i)(?:bikarbonat|HCO3|bicarbonate|CO2)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mEq|mmol|meq)?",
+        "elek_kalsium": "(?i)(?:kalsium|Ca|calcium)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mg/dL|mg|mmol)?",
+        "elek_fosfor": "(?i)(?:fosfor|phosphor|P|phosphate)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mg/dL|mg|mmol)?",
+        "abg_ph": "(?i)(?:pH|asam\\s*basa)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d{1,2})",
+        "abg_pco2": "(?i)(?:pCO2|PCO2|CO2)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mmHg)?",
+        "abg_hco3": "(?i)(?:HCO3|bikarbonat)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*(?:mEq|mmol)?",
+        "abg_be": "(?i)(?:BE|base\\s*excess|basa\\s*ekses)\\s*[:=]?\\s*([+-]?\\s*\\d+[.,]?\\d*)"
+      },
+      "doc_types": ["lab", "cppt_ranap"],
+      "desc": "Elektrolit (Na, K, Cl, HCO3, Ca, P) + ABG (pH, pCO2, HCO3, BE)"
+    },
+
+    "Laboratorium": {
+      "fields": [
+        "lab_hb", "lab_leukosit", "lab_trombosit", "lab_ht", "lab_eritrosit",
+        "lab_gds", "lab_hba1c", "lab_albumin", "lab_kolesterol_total",
+        "lab_ldl", "lab_hdl", "lab_trigliserida", "lab_ast", "lab_alt",
+        "lab_pt", "lab_aptt", "lab_inr", "lab_ferritin", "lab_tibc",
+        "lab_transferrin_sat", "lab_ptg_pth"
+      ],
+      "type": "builtin",
+      "extractor": "lab_values",
+      "desc": "HB, hematologi, gizi, lipid, koagulasi, besi, PTH"
+    },
+
+    "Tanggal Laboratorium": {
+      "fields": ["lab_tanggal_igd", "lab_tanggal_ranap", "lab_tanggal_pertama"],
+      "type": "builtin",
+      "extractor": "lab_dates",
+      "desc": "Tanggal sampling lab"
+    },
+
+    "Komplikasi CKD": {
+      "fields": [
+        "komplikasi_anemia", "komplikasi_mbd", "komplikasi_asidosis",
+        "komplikasi_hiperkalemia", "komplikasi_overload_cairan",
+        "komplikasi_neuropati", "komplikasi_uremik"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "komplikasi_anemia": ["anemia", "hb rendah", "hemoglobin rendah", "anemia renal", "anemia defisiensi besi"],
+        "komplikasi_mbd": ["mbd", "mineral bone disease", "osteodistrofi renal", "hiperparatiroid", "osteoporosis renal", "renal bone"],
+        "komplikasi_asidosis": ["asidosis", "asidosis metabolik", "metabolic acidosis", "bikarbonat rendah"],
+        "komplikasi_hiperkalemia": ["hiperkalemia", "kalium tinggi", "hyperkalemia", "k tinggi", "k > 5.5"],
+        "komplikasi_overload_cairan": ["overload", "kelebihan cairan", "edema", "hipervolemia", "pulmonary edema", "edema paru"],
+        "komplikasi_neuropati": ["neuropati", "neuropathy", "peripheral neuropathy", "neuropati uremik"],
+        "komplikasi_uremik": ["uremik", "uremic", "encephalopathy uremik", "pericarditis uremik", "gatal uremik"]
+      },
+      "desc": "Komplikasi CKD: anemia, MBD, asidosis, hiperkalemia, overload, neuropati, uremik"
+    },
+
+    "Dialisis": {
+      "fields": [
+        "dialisis_status", "dialisis_jenis", "dialisis_akses",
+        "dialisis_frekuensi", "dialisis_mulai", "dialisis_ktd",
+        "kdpi", "urr", "ktv"
+      ],
+      "type": "regex",
+      "patterns": {
+        "dialisis_status": "(?i)(?:dialisis|hemodialisis|HD|cuci\\s*da(?:rh|rah)|CAPD|peritoneal\\s*dialysis)\\s*[:=]?\\s*(ada|aktif|rutin|belum|tidak|dijadwalkan|emergency|teratur)",
+        "dialisis_jenis": "(?i)(?:hemodialisis|HD|CAPD|peritoneal\\s*dialysis|PD|akut|kronis|maintenance|intermittent)\\s*[:=]?\\s*(.{3,50})",
+        "dialisis_akses": "(?i)(?:akses|access|vaskuler|fistula|AV\\s*fistula|AVF|graft|kateter|catheter|subclavian|jugular|femoral|cimino|tenckhoff)\\s*[:=]?\\s*(.{3,100})",
+        "dialisis_frekuensi": "(?i)(?:frekuensi|frequency|jadwal|schedule)\\s*(?:HD|dialisis)?\\s*[:=]?\\s*(\\d+\\s*(?:x|kali)\\s*(?:per|/)\\s*(?:minggu|week)|.{3,50})",
+        "dialisis_mulai": "(?i)(?:mulai|start|pertama|first)\\s*(?:dialisis|HD)\\s*[:=]?\\s*(\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|\\d{1,2}\\s+(?:jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des)[a-z]*\\s+\\d{2,4})",
+        "dialisis_ktd": "(?i)(?:KTD|kejadian\\s*tidak\\s*diinginkan|complication|komplikasi\\s*(?:HD|dialisis))\\s*[:=]?\\s*(.{3,100})",
+        "kdpi": "(?i)(?:KDPI|kidney\\s*donor\\s*profil)\\s*[:=]?\\s*(\\d{1,3})",
+        "urr": "(?i)(?:URR|urea\\s*reduction\\s*ratio)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)\\s*%?",
+        "ktv": "(?i)(?:Kt/V|KTV|kt/v)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)"
+      },
+      "doc_types": ["cppt_ranap", "resume"],
+      "desc": "Status dialisis, jenis, akses, frekuensi, KTD, URR, Kt/V"
+    },
+
+    "Transplantasi Ginjal": {
+      "fields": [
+        "tx_ginjal", "tx_tanggal", "tx_donor", "tx_status_fungsi",
+        "tx_rejeksi", "tx_imunosupresan"
+      ],
+      "type": "regex",
+      "patterns": {
+        "tx_ginjal": "(?i)(?:transplantasi|cangkok|graft)\\s*ginjal\\s*[:=]?\\s*(ada|pernah|belum|rencana|riwayat|dilakukan)",
+        "tx_tanggal": "(?i)(?:transplantasi|tx)\\s*ginjal.*?(\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|\\d{1,2}\\s+(?:jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des)[a-z]*\\s+\\d{2,4})",
+        "tx_donor": "(?i)(?:donor|sumbangan)\\s*[:=]?\\s*(.{3,100})",
+        "tx_status_fungsi": "(?i)(?:fungsi|function)\\s*(?:graft|ginjal|transplant)\\s*[:=]?\\s*(.{3,100})",
+        "tx_rejeksi": "(?i)(?:rejeksi|reject|graft\\s*dysfunction)\\s*[:=]?\\s*(ada|tidak|akut|kronis|positif|negatif)",
+        "tx_imunosupresan": "(?i)(?:imunosupresan|immunosuppressant|tacrolimus|cyclosporine|mycophenolate|MMF|azathioprine|sirolimus)\\s*[:=]?\\s*(.{3,100})"
+      },
+      "doc_types": ["resume", "cppt_ranap"],
+      "desc": "Transplantasi ginjal: donor, fungsi graft, rejeksi, imunosupresan"
+    },
+
+    "Demam": {
+      "fields": ["demam_saat_masuk", "demam_selama_rawat", "suhu_tertinggi"],
+      "type": "builtin",
+      "extractor": "demam",
+      "desc": "Tracking demam"
+    },
+
+    "Medikasi": {
+      "fields": [
+        "med_esa", "med_besi", "med_kalsium_karbonat", "med_sevelamer",
+        "med_vitamin_d", "med_antihipertensi", "med_diuretik",
+        "med_antidiabetes", "med_statin", "med_antibiotik",
+        "med_esa_detail", "med_besi_detail", "med_kalsium_karbonat_detail",
+        "med_sevelamer_detail", "med_vitamin_d_detail",
+        "med_antihipertensi_detail", "med_diuretik_detail",
+        "med_antidiabetes_detail", "med_statin_detail", "med_antibiotik_detail"
+      ],
+      "type": "builtin",
+      "extractor": "medications",
+      "desc": "ESA, besi, Ca-karbonat, sevelamer, vitamin D, antihipertensi, diuretik, antidiabetes, statin, antibiotik + detail"
+    },
+
+    "Faktor Risiko": {
+      "fields": [
+        "rf_diabetes", "rf_hipertensi", "rf_gagal_jantung",
+        "rf_gagal_ginjal_akut", "rf_penyakit_autoimun",
+        "rf_obesitas", "rf_merokok", "rf_nephrotoksik",
+        "rf_batu_ginjal", "rf_riwayat_keluarga_gagal_ginjal",
+        "rpd_text"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "rf_diabetes": ["diabetes", "dm tipe", "dm type", "nephropati diabetik", "diabetic nephropathy", "gula darah"],
+        "rf_hipertensi": ["hipertensi", "darah tinggi", "nephrosclerosis", "nephropati hipertensi"],
+        "rf_gagal_jantung": ["gagal jantung", "chf", "congestive heart failure", "penyakit jantung"],
+        "rf_gagal_ginjal_akut": ["gagal ginjal akut", "aki", "acute kidney injury", "nekrosis tubular"],
+        "rf_penyakit_autoimun": ["lupus", "sle", "autoimun", "glomerulonefritis", "vasculitis", "nephritis"],
+        "rf_obesitas": ["obesitas", "obese", "imt", "bmi"],
+        "rf_merokok": ["merokok", "rokok", "smoking", "smoker"],
+        "rf_nephrotoksik": ["nephrotoksi", "aminoglikosid", "nsaid", "kontras", "contrast media", "obat nephrotoksik"],
+        "rf_batu_ginjal": ["batu ginjal", "urolitiasis", "nephrolitiasis", "batu saluran kemih"],
+        "rf_riwayat_keluarga_gagal_ginjal": ["riwayat keluarga", "familial", "pkd", "polycystic kidney"]
+      },
+      "desc": "Faktor risiko progresi CKD"
+    },
+
+    "Tindakan Klinis": {
+      "fields": [
+        "act_hd", "act_capd", "act_kateter_dialisis",
+        "act_transplantasi", "act_biopsi_ginjal",
+        "act_konsul_nefrologi", "act_konsul_gizi",
+        "act_edukasi_pasien", "act_vaksinasi"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "act_hd": ["hemodialisis", "hd", "cuci darah", "dialisis"],
+        "act_capd": ["capd", "continuous ambulatory", "peritoneal dialysis", "dialisis peritoneal"],
+        "act_kateter_dialisis": ["kateter dialisis", "tenckhoff", "cimino", "av fistula", "avf", "shunt"],
+        "act_transplantasi": ["transplantasi ginjal", "cangkok ginjal", "kidney transplant"],
+        "act_biopsi_ginjal": ["biopsi ginjal", "renal biopsy", "biopsy kidney"],
+        "act_konsul_nefrologi": ["konsul nefro", "konsul nefrologi", "nefrologi", "ginjal"],
+        "act_konsul_gizi": ["konsul gizi", "nutrisionis", "gizi"],
+        "act_edukasi_pasien": ["edukasi", "konseling", "penjelasan", "diet renal"],
+        "act_vaksinasi": ["vaksin", "vaksinasi", "hepatitis b", "hb vaccine"]
+      },
+      "desc": "Tindakan klinis CKD: HD, CAPD, akses dialisis, transplantasi, biopsi"
+    },
+
+    "Outcome": {
+      "fields": [
+        "cara_keluar", "kondisi_pulang", "rencana_kontrol",
+        "lama_rawat_hari", "keterangan_pulang"
+      ],
+      "type": "builtin",
+      "extractor": "outcome",
+      "desc": "Cara keluar, kondisi pulang, kontrol, LOS, keterangan"
+    },
+
+    "Pemeriksaan Fisik": {
+      "fields": ["fisik_kesadaran", "fisik_bb", "fisik_tb", "fisik_imt", "fisik_edema", "fisik_auskultasi"],
+      "type": "keyword",
+      "keywords": {
+        "fisik_kesadaran": ["kesadaran", "compos mentis", "somnolen", "sopor", "koma"],
+        "fisik_bb": ["bb", "berat badan", "dry weight", "berat kering"],
+        "fisik_tb": ["tb", "tinggi badan"],
+        "fisik_imt": ["imt", "bmi"],
+        "fisik_edema": ["edema", "bengkak", "anasarka", "edema perifer"],
+        "fisik_auskultasi": ["auskultasi", "crackles", "ronki", "bising jantung", "murmur"]
+      },
+      "desc": "Pemeriksaan fisik CKD: kesadaran, BB, TB, IMT, edema, auskultasi"
+    }
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "_comment": "Disease Profile: Pneumonia Dewasa — CAP/HAP adult pneumonia",
+  "_version": "1.0",
+
+  "name": "Pneumonia Dewasa",
+  "version": "1.0",
+  "description": "Ekstraksi data pneumonia dewasa (CAP/HAP). Includes CURB-65, procalcitonin, blood culture, thorax PA, oksigen, ventilasi.",
+  "drug_profile": "pneumonia.json",
+
+  "categories": {
+    "Demografi": {
+      "fields": ["demo_age", "demo_gender", "jenis_kelamin"],
+      "type": "builtin",
+      "extractor": "demographics",
+      "desc": "Usia + Jenis Kelamin"
+    },
+
+    "Diagnosis": {
+      "fields": ["diagnosis_utama", "diagnosis_sekunder", "pneumonia_klasifikasi", "icd_code"],
+      "type": "regex",
+      "patterns": {
+        "diagnosis_utama": "(?i)diagnos[aei]\\s*(?:utama)?\\s*[:=]?\\s*(.{5,200})",
+        "diagnosis_sekunder": "(?i)diagnos[aei]\\s*(?:sekunder|tambahan|lain)\\s*[:=]?\\s*(.{5,200})",
+        "pneumonia_klasifikasi": "(?i)(CAP|HAP|VAP|community\\s*acquired|hospital\\s*acquired|ventilator)\\s*(?:pneumonia)?",
+        "icd_code": "(?i)J18\\.[0-9]|J15\\.[0-9]|J14|J13|J12\\.[0-9]"
+      },
+      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "desc": "CAP/HAP/VAP + kode ICD"
+    },
+
+    "CURB-65": {
+      "fields": [
+        "curb65_score", "curb65_confusion", "curb65_ureum", "curb65_rr",
+        "curb65_bp", "curb65_age65", "curb65_kategori", "psi_class"
+      ],
+      "type": "regex",
+      "patterns": {
+        "curb65_score": "(?i)curb[-\\s]?65\\s*[:=]?\\s*(\\d)",
+        "curb65_confusion": "(?i)(confusion|b[ia]ngung|dis[oe]rientasi).*(?:ada|positif|\\+|ya)|(?:ada|positif|\\+|ya).*(confusion|b[ia]ngung|dis[oe]rientasi)",
+        "curb65_ureum": "(?i)(?:ureum|BUN|urea).*(?:>\\s*7|[tu]inggi)|(?:>\\s*7|[tu]inggi).*(?:ureum|BUN)",
+        "curb65_rr": "(?i)(?:pernapasan|respiratory|RR).*(?:≥\\s*30|lebih.*30|30\\s*x|takipn)",
+        "curb65_bp": "(?i)(?:tekanan\\s*darah|TD|sistolik).*(?:<\\s*90|<\\s*60|hipoten[sz])",
+        "curb65_age65": "(?i)usia.*(?:≥\\s*65|lebih.*65|diatas\\s*65)",
+        "curb65_kategori": "(?i)CURB[-\\s]?65.*?(ringan|sedang|berat|rendah|tinggi|risiko)",
+        "psi_class": "(?i)(?:PSI|pneumonia\\s*severity\\s*index)\\s*(?:class|kelas|score)?\\s*[:=]?\\s*([IVX]+|\\d+)"
+      },
+      "doc_types": ["cppt_igd", "cppt_ranap", "resume"],
+      "desc": "Skor CURB-65 komponen + kategori + PSI class"
+    },
+
+    "Vital Sign": {
+      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "type": "builtin",
+      "extractor": "vitals",
+      "desc": "TD, HR, RR, Suhu, SpO2 dari CPPT IGD"
+    },
+
+    "Oksigen & Ventilasi": {
+      "fields": ["oksigen_terapi", "oksigen_lpm", "hfnc", "niv", "ventilasi_mekanik", "pao2_fio2"],
+      "type": "regex",
+      "patterns": {
+        "oksigen_terapi": "(?i)(?:oksigen|O2)\\s*(?:terapi|therap[yi])?\\s*[:=]?\\s*(.{3,80})",
+        "oksigen_lpm": "(?i)(\\d+(?:\\.\\d+)?)\\s*(?:lpm|L/m|liter)",
+        "hfnc": "(?i)(HFNC|high\\s*flow|high-flow)",
+        "niv": "(?i)(NIV|NPPV|BiPAP|CPAP|non-?invasif)",
+        "ventilasi_mekanik": "(?i)(ventilasi\\s*mekanik|ventilator|intubasi|ETT)",
+        "pao2_fio2": "(?i)(?:PaO2|P/F)\\s*[:/]\\s*FiO2\\s*[:=]?\\s*(\\d+)"
+      },
+      "doc_types": ["cppt_igd", "cppt_ranap"],
+      "desc": "Oksigen terapi, HFNC, NIV, ventilasi mekanik, PaO2/FiO2 ratio"
+    },
+
+    "Laboratorium": {
+      "fields": [
+        "lab_hb", "lab_leukosit", "lab_trombosit", "lab_gds",
+        "lab_ureum", "lab_kreatinin", "lab_natrium", "lab_kalium",
+        "lab_crp", "lab_pct", "lab_albumin", "lab_ast", "lab_alt"
+      ],
+      "type": "builtin",
+      "extractor": "lab_values",
+      "desc": "HB, leukosit, trombosit, GDS, ureum, kreatinin, CRP, procalcitonin, albumin, SGOT/SGPT"
+    },
+
+    "Kultur & Sensitivitas": {
+      "fields": [
+        "kultur_darah", "kultur_sputum", "kultur_lain",
+        "gram_stain", "sensitivitas", "kuman_terdeteksi"
+      ],
+      "type": "regex",
+      "patterns": {
+        "kultur_darah": "(?i)(?:blood\\s*culture|kultur\\s*da(?:rh|rah))\\s*[:=]?\\s*(.{3,200})",
+        "kultur_sputum": "(?i)(?:sputum\\s*culture|kultur\\s*sputum|BCS)\\s*[:=]?\\s*(.{3,200})",
+        "kultur_lain": "(?i)(?:kultur|culture)\\s*(?:lain|other|sekresi|pleura)\\s*[:=]?\\s*(.{3,200})",
+        "gram_stain": "(?i)(?:gram\\s*stain|pewarnaan\\s*gram|apusan)\\s*[:=]?\\s*(.{3,200})",
+        "sensitivitas": "(?i)(?:sensitivit[aai]|sensitivity|antibio(?:g)?)\\s*[:=]?\\s*(.{3,200})",
+        "kuman_terdeteksi": "(?i)(?:kuman|bakteri|pathogen|organisme)\\s*(?:terdeteksi|ditemukan|positif)\\s*[:=]?\\s*(.{3,100})"
+      },
+      "doc_types": ["lab", "cppt_ranap", "resume"],
+      "desc": "Hasil kultur darah, sputum, gram stain, sensitivitas antibiotik"
+    },
+
+    "Tanggal Laboratorium": {
+      "fields": ["lab_tanggal_igd", "lab_tanggal_ranap", "lab_tanggal_pertama"],
+      "type": "builtin",
+      "extractor": "lab_dates",
+      "desc": "Tanggal sampling lab IGD, Ranap, pertama"
+    },
+
+    "Thorax": {
+      "fields": ["thorax_documented", "thorax_kesan", "thorax_tanggal"],
+      "type": "builtin",
+      "extractor": "thorax",
+      "desc": "Foto thorax PA + kesan + tanggal"
+    },
+
+    "Demam": {
+      "fields": ["demam_saat_masuk", "demam_selama_rawat", "suhu_tertinggi"],
+      "type": "builtin",
+      "extractor": "demam",
+      "desc": "Tracking demam saat masuk & selama rawat"
+    },
+
+    "Medikasi": {
+      "fields": [
+        "med_antibiotik", "med_bronkodilator", "med_kortikosteroid",
+        "med_mukolitik", "med_antipiretik", "med_ppi",
+        "med_antibiotik_detail", "med_bronkodilator_detail",
+        "med_kortikosteroid_detail", "med_mukolitik_detail",
+        "med_antipiretik_detail", "med_ppi_detail"
+      ],
+      "type": "builtin",
+      "extractor": "medications",
+      "desc": "Antibiotik, bronkodilator, kortikosteroid, mukolitik, antipiretik, PPI + detail"
+    },
+
+    "Faktor Risiko": {
+      "fields": [
+        "rf_diabetes", "rf_hipertensi", "rf_penyakit_paru_kronis",
+        "rf_penyakit_jantung", "rf_gagal_ginjal", "rf_merokok",
+        "rf_imunosupresi", "rf_obesitas", "rf_lanjut_usia",
+        "rf_dm_type", "rpd_text"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "rf_diabetes": ["diabetes", "dm tipe", "dm type", "gula darah", "glukofag", "metformin"],
+        "rf_hipertensi": ["hipertensi", "darah tinggi", "antihipertensi"],
+        "rf_penyakit_paru_kronis": ["ppok", "copd", "asma", "bronkiektasis", "penyakit paru obstruksi"],
+        "rf_penyakit_jantung": ["gagal jantung", "jantung koroner", "penyakit jantung", "chf", "gagal jantung kongestif"],
+        "rf_gagal_ginjal": ["gagal ginjal", "ckd", "crf", "cuci darah", "hemodialisis", "dialisis"],
+        "rf_merokok": ["merokok", "rokok", "smoking", "smoker"],
+        "rf_imunosupresi": ["immunosupresi", "imunosupresi", "hiv", "kemoterapi", "steroid kronis", "transplantasi"],
+        "rf_obesitas": ["obesitas", "obese", "imt", "bmi"],
+        "rf_lanjut_usia": ["lanjut usia", "lansia", "geriatri", "usia tua"]
+      },
+      "desc": "Faktor risiko pneumonia dewasa"
+    },
+
+    "Tindakan Klinis": {
+      "fields": [
+        "act_oksigen_terapi", "act_fisioterapi_dada", "act_nebulisasi",
+        "act_rawat_icu_hcu", "act_konsul_paru", "act_konsul_intern",
+        "act_konsul_gizi", "act_edukasi_keluarga", "act_pengambilan_sputum"
+      ],
+      "type": "keyword",
+      "keywords": {
+        "act_oksigen_terapi": ["oksigen terapi", "o2 terapi", "oxygen", "nasal kanul", "simple mask", "non rebreathing"],
+        "act_fisioterapi_dada": ["fisioterapi dada", "chest physiotherapy", "cpt", "fisioterapi napas"],
+        "act_nebulisasi": ["nebul", "nebulisasi", "nebulizer"],
+        "act_rawat_icu_hcu": ["icu", "hcu", "intensive care", "high care", "iccu"],
+        "act_konsul_paru": ["konsul paru", "konsul pulmonologi", "pulmonologi", "konsul thorax"],
+        "act_konsul_intern": ["konsul intern", "konsul penyakit dalam", "internis", "konsul pd"],
+        "act_konsul_gizi": ["konsul gizi", "gizi", "nutrisionis"],
+        "act_edukasi_keluarga": ["edukasi", "konseling", "penjelasan ke"],
+        "act_pengambilan_sputum": ["pengambilan sputum", "ambil sputum", "kultur sputum", "sputum culture"]
+      },
+      "desc": "Tindakan klinis pneumonia dewasa"
+    },
+
+    "Outcome": {
+      "fields": [
+        "cara_keluar", "kondisi_pulang", "rencana_kontrol",
+        "lama_rawat_hari", "keterangan_pulang"
+      ],
+      "type": "builtin",
+      "extractor": "outcome",
+      "desc": "Cara keluar, kondisi pulang, kontrol, LOS, keterangan"
+    },
+
+    "Pemeriksaan Fisik": {
+      "fields": ["fisik_kesadaran", "fisik_bb", "fisik_tb", "fisik_imt"],
+      "type": "keyword",
+      "keywords": {
+        "fisik_kesadaran": ["kesadaran", "compos mentis", "somnolen", "sopor", "koma", "alert", "gcs"],
+        "fisik_bb": ["bb", "berat badan"],
+        "fisik_tb": ["tb", "tinggi badan"],
+        "fisik_imt": ["imt", "bmi"]
+      },
+      "desc": "Pemeriksaan fisik: kesadaran, BB, TB, IMT"
+    }
+  }
+}

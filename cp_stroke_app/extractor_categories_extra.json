@@ -1,0 +1,48 @@
+{
+  "_comment": "Kategori data tambahan untuk ekstraksi RME Stroke.",
+  "_comment_format": {
+    "extractor": "Gunakan 'keyword' untuk pencocokan kata kunci sederhana, atau 'none' untuk field yang diisi manual nanti",
+    "keywords": "Daftar kata kunci untuk extractor tipe 'keyword' (case-insensitive)"
+  },
+  "Pengaturan": {
+    "fields": [
+      "setting_ruang_rawat",
+      "setting_kelas"
+    ],
+    "desc": "Informasi ruang rawat & kelas pasien — keyword-based",
+    "extractor": "keyword",
+    "keywords": [
+      "rawat inap",
+      "rawat jalan",
+      "kelas",
+      "ruang",
+      "bangsal",
+      "icu",
+      "hcu",
+      "iccu",
+      "stroke unit"
+    ]
+  },
+  "Pemeriksaan Fisik": {
+    "fields": [
+      "fisik_kesadaran",
+      "fisik_bb",
+      "fisik_tb",
+      "fisik_imt"
+    ],
+    "desc": "Pemeriksaan fisik: kesadaran, BB, TB, IMT — keyword-based",
+    "extractor": "keyword",
+    "keywords": [
+      "kesadaran",
+      "bb",
+      "tb",
+      "imt",
+      "berat badan",
+      "tinggi badan",
+      "compos mentis",
+      "somnolen",
+      "sopor",
+      "koma"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+# =============================================================
+# Pipeline RME — .gitignore
+# KECUALI: data pasien (PII), output intermediat, artefak lokal
+# =============================================================
+
+# ── Data Pasien (PII — JANGAN PERNAH COMMIT) ──
+01_raw_pdf/
+02_text_extracted/
+03_anonymized_text/
+03_anonymized_text_v6/
+03_anonymized_text_v6_test/
+04_anonymization_report/
+04_anonymization_report_v6/
+04_ekstraksi_json/
+04_llm_extracted/
+04_rule_based_output/
+05_dataset_excel/
+05_rule_based_output/
+06_extracted_data/
+06_review_candidates/
+07_llm_output_json/
+08_dataset_excel/
+09_logs/
+anonim/
+ekstraksi/
+laporan_audit/
+
+# ── Excel/CSV output (data hasil ekstraksi) ──
+*.xlsx
+*.xls
+*.csv
+
+# ── PDF mentah ──
+*.pdf
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+.eggs/
+*.so
+
+# ── Virtual env ──
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# ── Streamlit ──
+.streamlit/
+
+# ── Jupyter ──
+.ipynb_checkpoints/
+*.ipynb
+
+# ── LLM cache / API keys ──
+.env
+.env.*
+*.env

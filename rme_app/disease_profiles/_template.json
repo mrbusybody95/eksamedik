@@ -1,0 +1,65 @@
+{
+  "_comment": "TEMPLATE — Copy ini untuk buat profil penyakit baru. Ganti isi sesuai kebutuhan.",
+  "_guide": {
+    "type_builtin": "Pakai extractor function yang sudah ada (demographics, vitals, lab_values, dll). Lihat daftar di _builtin_extractors.py",
+    "type_regex": "Definisikan pattern per field. Capture group 1 = nilai yang diambil. Contoh: '(?i)diagnos[aei]\\s*:\\s*(.+)'",
+    "type_keyword": "Definisikan keyword list per field. Hasil: 'ada' jika keyword ditemukan, 'tidak' jika tidak.",
+    "fields": "Nama field yang akan muncul di output. Gunakan snake_case.",
+    "drug_profile": "Opsional. Nama file di drug_profiles/ yang berisi daftar obat untuk penyakit ini."
+  },
+
+  "name": "NAMA_PENYAKIT",
+  "version": "1.0",
+  "description": "Deskripsi singkat profil ini",
+  "drug_profile": null,
+
+  "categories": {
+    "Demografi": {
+      "fields": ["age", "gender"],
+      "type": "builtin",
+      "extractor": "demographics",
+      "desc": "Usia + Jenis Kelamin — universal untuk semua penyakit"
+    },
+
+    "Diagnosis": {
+      "fields": ["diagnosis_utama"],
+      "type": "regex",
+      "patterns": {
+        "diagnosis_utama": "(?i)diagnos[aei]\\s*(?:utama)?\\s*[:=]?\\s*(.{5,200})"
+      },
+      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "desc": "Contoh regex extractor — sesuaikan pattern dengan penyakit"
+    },
+
+    "Vital Sign": {
+      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "type": "builtin",
+      "extractor": "vitals",
+      "desc": "Vital sign universal"
+    },
+
+    "Laboratorium": {
+      "fields": ["lab_hb", "lab_leukosit", "lab_trombosit", "lab_gds"],
+      "type": "builtin",
+      "extractor": "lab_values",
+      "desc": "Sesuaikan daftar field lab dengan kebutuhan penyakit"
+    },
+
+    "Komplikasi": {
+      "fields": ["komplikasi_infeksi", "komplikasi_gagal_organ"],
+      "type": "keyword",
+      "keywords": {
+        "komplikasi_infeksi": ["infeksi nosokomial", "sepsis", "pneumonia"],
+        "komplikasi_gagal_organ": ["gagal ginjal", "gagal napas", "shock"]
+      },
+      "desc": "Contoh keyword extractor"
+    },
+
+    "Outcome": {
+      "fields": ["cara_keluar", "kondisi_pulang", "lama_rawat_hari"],
+      "type": "builtin",
+      "extractor": "outcome",
+      "desc": "Outcome universal"
+    }
+  }
+}
