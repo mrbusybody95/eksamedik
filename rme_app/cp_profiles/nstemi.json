@@ -1,0 +1,183 @@
+{
+  "_comment": "Clinical Pathway Standard: NSTEMI — berdasarkan CP Kemenkes + ESC Guidelines",
+  "name": "NSTEMI",
+  "disease_profile_ref": "nstemi",
+  "version": "1.0",
+  "los_target": {
+    "min": 3,
+    "max": 7
+  },
+  "standards": {
+    "Diagnostik Wajib": [
+      {
+        "field": "troponin_t",
+        "expected": "ada",
+        "label": "Troponin T",
+        "severity": "wajib",
+        "category": "Cardiac Biomarkers"
+      },
+      {
+        "field": "troponin_i",
+        "expected": "ada",
+        "label": "Troponin I",
+        "severity": "wajib",
+        "category": "Cardiac Biomarkers"
+      },
+      {
+        "field": "ecg_ada",
+        "expected": "ada",
+        "label": "EKG 12 Lead",
+        "severity": "wajib",
+        "category": "ECG"
+      },
+      {
+        "field": "echo_ada",
+        "expected": "ada",
+        "label": "Echocardiography",
+        "severity": "wajib",
+        "category": "Echocardiography"
+      },
+      {
+        "field": "lab_hb",
+        "expected": "ada",
+        "label": "Hemoglobin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_kreatinin",
+        "expected": "ada",
+        "label": "Kreatinin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_kolesterol_total",
+        "expected": "ada",
+        "label": "Kolesterol Total",
+        "severity": "rekomendasi",
+        "category": "Laboratorium"
+      }
+    ],
+    "Medikasi Wajib": [
+      {
+        "field": "med_antiplatelet",
+        "expected": "ada",
+        "label": "Antiplatelet (DAPT)",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_antikoagulan",
+        "expected": "ada",
+        "label": "Antikoagulan",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_statin",
+        "expected": "ada",
+        "label": "Statin",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_beta_blocker",
+        "expected": "ada",
+        "label": "Beta Blocker",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_nitrat",
+        "expected": "ada",
+        "label": "Nitrat",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_ppi",
+        "expected": "ada",
+        "label": "PPI",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      }
+    ],
+    "Tindakan Wajib": [
+      {
+        "field": "act_konsul_jantung",
+        "expected": "ada",
+        "label": "Konsul Kardiologi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_monitor_troponin",
+        "expected": "ada",
+        "label": "Monitor Troponin Serial",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_echocardiography",
+        "expected": "ada",
+        "label": "Echocardiography",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_edukasi_keluarga",
+        "expected": "ada",
+        "label": "Edukasi Keluarga",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      }
+    ],
+    "Skor Risiko": [
+      {
+        "field": "killip_class",
+        "expected": "ada",
+        "label": "Killip Class",
+        "severity": "wajib",
+        "category": "Skor Risiko"
+      },
+      {
+        "field": "timi_score",
+        "expected": "ada",
+        "label": "TIMI Score",
+        "severity": "rekomendasi",
+        "category": "Skor Risiko"
+      },
+      {
+        "field": "grace_score",
+        "expected": "ada",
+        "label": "GRACE Score",
+        "severity": "rekomendasi",
+        "category": "Skor Risiko"
+      }
+    ],
+    "Outcome": [
+      {
+        "field": "cara_keluar",
+        "expected": "ada",
+        "label": "Cara Keluar",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "kondisi_pulang",
+        "expected": "ada",
+        "label": "Kondisi Pulang",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "lama_rawat_hari",
+        "expected": "ada",
+        "label": "Lama Rawat",
+        "severity": "wajib",
+        "category": "Outcome"
+      }
+    ]
+  }
+}

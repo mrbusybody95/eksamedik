@@ -1,0 +1,153 @@
+{
+  "_comment": "Clinical Pathway Standard: Stroke Infark — berdasarkan CP Kemenkes",
+  "name": "Stroke Infark",
+  "disease_profile_ref": "stroke_infark",
+  "version": "1.0",
+  "los_target": {
+    "min": 5,
+    "max": 10
+  },
+  "standards": {
+    "Diagnostik Wajib": [
+      {
+        "field": "ct_documented",
+        "expected": "ada",
+        "label": "CT Scan Kepala",
+        "severity": "wajib",
+        "category": "CT Scan"
+      },
+      {
+        "field": "lab_hb",
+        "expected": "ada",
+        "label": "Hemoglobin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_leukosit",
+        "expected": "ada",
+        "label": "Leukosit",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_trombosit",
+        "expected": "ada",
+        "label": "Trombosit",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_gds",
+        "expected": "ada",
+        "label": "GDS",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_kreatinin",
+        "expected": "ada",
+        "label": "Kreatinin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "gcs",
+        "expected": "ada",
+        "label": "GCS",
+        "severity": "wajib",
+        "category": "GCS"
+      },
+      {
+        "field": "thorax_documented",
+        "expected": "ada",
+        "label": "Foto Thorax",
+        "severity": "rekomendasi",
+        "category": "Thorax"
+      }
+    ],
+    "Medikasi Wajib": [
+      {
+        "field": "med_antiplatelet",
+        "expected": "ada",
+        "label": "Antiplatelet",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_statin",
+        "expected": "ada",
+        "label": "Statin",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_antihipertensi",
+        "expected": "ada",
+        "label": "Antihipertensi",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_ppi",
+        "expected": "ada",
+        "label": "PPI/Gastroproteksi",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      }
+    ],
+    "Tindakan Wajib": [
+      {
+        "field": "act_konsul_neurologi",
+        "expected": "ada",
+        "label": "Konsul Neurologi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_fisioterapi",
+        "expected": "ada",
+        "label": "Fisioterapi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_konsul_gizi",
+        "expected": "ada",
+        "label": "Konsul Gizi",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_edukasi_keluarga",
+        "expected": "ada",
+        "label": "Edukasi Keluarga",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      }
+    ],
+    "Outcome": [
+      {
+        "field": "cara_keluar",
+        "expected": "ada",
+        "label": "Cara Keluar",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "kondisi_pulang",
+        "expected": "ada",
+        "label": "Kondisi Pulang",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "lama_rawat_hari",
+        "expected": "ada",
+        "label": "Lama Rawat",
+        "severity": "wajib",
+        "category": "Outcome"
+      }
+    ]
+  }
+}

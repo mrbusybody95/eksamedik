@@ -246,7 +246,7 @@ def _extract_regex(files: list[dict], category: dict) -> dict[str, str]:
                     best_priority = priority
                     break  # first match in this file is enough
         
-        result[field_name] = best_match if best_match else "unknown"
+        result[field_name] = best_match if best_match else None  # not found — missing
     
     return result
 
@@ -309,13 +309,16 @@ def _check_negation(text_lower: str, keyword: str, window: int = _NEGATION_WINDO
     return found_negated
 
 
-def _extract_keyword(files: list[dict], category: dict) -> dict[str, str]:
+def _extract_keyword(files: list[dict], category: dict) -> dict[str, str | None]:
     """Generic keyword extractor with word-boundary + negation detection.
     
     For each field:
       1. Check if any keyword exists with \\b word boundaries (no substring false positives)
       2. If found, check for negation within N-token window
-      3. Negated → "tidak", Positive → "ada", Not found → "tidak"
+      3. Returns:
+         - "ada"   → keyword found + positive context
+         - "tidak" → keyword found + negated context (e.g. "tidak ada demam")
+         - None    → keyword not found in text at all (missing/undocumented)
     """
     keywords_map = category.get("keywords", {})
     
@@ -323,7 +326,7 @@ def _extract_keyword(files: list[dict], category: dict) -> dict[str, str]:
     all_text = " ".join(f["text"] for f in files)
     all_text_lower = all_text.lower()
     
-    result: dict[str, str] = {}
+    result: dict[str, str | None] = {}
     for field_name, keywords in keywords_map.items():
         found = False
         negated = False
@@ -344,34 +347,125 @@ def _extract_keyword(files: list[dict], category: dict) -> dict[str, str]:
         
         if found and not negated:
             result[field_name] = "ada"
-        else:
+        elif found and negated:
             result[field_name] = "tidak"
+        else:
+            result[field_name] = None  # not found at all — missing/undocumented
     
     return result
 
 
 def _extract_builtin(files: list[dict], category: dict, 
                      drug_profile: dict[str, list[str]] | None = None,
-                     selected_drug_keys: list[str] | None = None) -> dict[str, str]:
-    """Delegate to a builtin extractor function from pipeline_core."""
+                     selected_drug_keys: list[str] | None = None) -> dict[str, str | None]:
+    """Delegate to a builtin extractor function from pipeline_core.
+    
+    Post-processes: converts "unknown" sentinel from pipeline_core → None (missing).
+    """
     extractor_name = category.get("extractor", "")
     fn = BUILTIN_EXTRACTORS.get(extractor_name)
     
     if fn is None:
-        # Fallback: all unknown
-        return {f: "unknown" for f in category["fields"]}
+        # Fallback: all None (missing)
+        return {f: None for f in category["fields"]}
     
     # Special case: GCS returns str, not dict
     if extractor_name == "gcs":
         val = fn(files)
-        return {"gcs": val}
+        return {"gcs": val if val != "unknown" else None}
     
     # Special case: medications needs drug keys
     if extractor_name == "medications":
-        return fn(files, selected_drug_keys)
+        data = fn(files, selected_drug_keys)
+    else:
+        # Standard: fn(files) → dict
+        data = fn(files)
     
-    # Standard: fn(files) → dict
-    return fn(files)
+    # Convert "unknown" sentinel → None (missing/undocumented)
+    return {k: (None if v == "unknown" else v) for k, v in data.items()}
+
+
+# ================================================================
+# TYPE COERCION — convert extracted values to proper types
+# ================================================================
+
+def coerce_extracted_types(
+    result: dict[str, Any],
+    profile: dict,
+) -> dict[str, Any]:
+    """Convert extracted string values to proper Python types based on field_types metadata.
+    
+    Field type spec in profile JSON (top-level "field_types" dict):
+      - "numeric"  → int if whole number, float if decimal, None if not parseable
+      - "boolean"  → kept as-is ("ada"/"tidak"/None)
+      - "text"     → kept as-is (default if not specified)
+    
+    Rules:
+      - None stays None (missing data)
+      - "ada"/"tidak"/"tidak_ada"/"ada (+)" → kept as string (categorical)
+      - "invalid" → kept as string (validation marker)
+      - Numeric strings → converted to int/float
+      - Empty string "" → None
+    
+    Args:
+        result: dict from extract_one_patient (values are str | None)
+        profile: loaded disease profile JSON (must contain "field_types")
+    
+    Returns:
+        Same dict with values converted to proper types.
+    """
+    field_types = profile.get("field_types", {})
+    
+    for field, ftype in field_types.items():
+        if field not in result:
+            continue
+        
+        val = result[field]
+        
+        # Skip None (missing) — stays None
+        if val is None:
+            continue
+        
+        # Skip categorical markers
+        if val in ("ada", "tidak", "tidak_ada", "invalid", "ada (+)"):
+            continue
+        # Also skip any "ada" variant or known categorical
+        if isinstance(val, str) and val.startswith("ada"):
+            continue
+        
+        if ftype == "numeric":
+            result[field] = _coerce_numeric(val)
+        # "boolean" and "text" → no conversion needed
+    
+    # Global cleanup: empty strings → None
+    for field, val in list(result.items()):
+        if val == "":
+            result[field] = None
+    
+    return result
+
+
+def _coerce_numeric(val: str) -> int | float | None:
+    """Convert a string to int or float. Returns None if not parseable."""
+    if not val or not isinstance(val, str):
+        return None
+    
+    # Clean: remove commas in numbers, strip whitespace
+    cleaned = val.strip().replace(",", ".")
+    
+    # Try int first (whole numbers)
+    try:
+        int_val = int(float(cleaned))
+        if str(int_val) == cleaned or str(float(int_val)) == cleaned:
+            return int_val
+    except (ValueError, OverflowError):
+        pass
+    
+    # Try float
+    try:
+        return float(cleaned)
+    except (ValueError, OverflowError):
+        return None
 
 
 # ================================================================
@@ -440,7 +534,7 @@ def extract_one_patient(
         elif cat_type == "keyword":
             data = _extract_keyword(files, cat_def)
         else:
-            data = {f: "unknown" for f in fields}
+            data = {f: None for f in fields}
         
         # Map fields to result
         field_map = {
@@ -455,14 +549,17 @@ def extract_one_patient(
             elif f in field_map and field_map[f] in data:
                 result[f] = data[field_map[f]]
             elif f not in result:
-                result[f] = "unknown"
+                result[f] = None  # missing — not documented
         
         # Merge extra dynamic fields (e.g. drug categories from drug_profile)
         for k, v in data.items():
             if k not in result:
                 result[k] = v
     
-    # Validate numeric fields
+    # Coerce types based on field_types metadata (string → numeric, etc.)
+    result = coerce_extracted_types(result, profile)
+    
+    # Validate numeric fields (range check)
     if _CORE_AVAILABLE:
         result, _warnings = validate_extracted_data(result)
     
@@ -560,17 +657,20 @@ def _extract_from_files(
         elif cat_type == "keyword":
             data = _extract_keyword(files, cat_def)
         else:
-            data = {f: "unknown" for f in fields}
+            data = {f: None for f in fields}
         
         for f in fields:
             if f in data:
                 result[f] = data[f]
             elif f not in result:
-                result[f] = "unknown"
+                result[f] = None  # missing — not documented
         
         for k, v in data.items():
             if k not in result:
                 result[k] = v
+    
+    # Coerce types based on field_types metadata
+    result = coerce_extracted_types(result, profile)
     
     if _CORE_AVAILABLE:
         result, _warnings = validate_extracted_data(result)

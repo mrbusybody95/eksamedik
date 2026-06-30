@@ -2,152 +2,268 @@
   "_comment": "Disease Profile: Stroke Infark — migrasi dari hardcode pipeline_core.py",
   "_version": "1.0",
   "_migrated_from": "EXTRACTOR_CATEGORIES di pipeline_core.py + extractor_categories_extra.json",
-
   "name": "Stroke Infark",
   "version": "1.0",
   "description": "Ekstraksi data pasien stroke infark sesuai Clinical Pathway Kemenkes. Migrasi dari hardcode stroke-specific.",
   "drug_profile": "stroke.json",
-
+  "field_types": {
+    "ct_aspects": "numeric",
+    "demo_age": "numeric",
+    "fisik_bb": "numeric",
+    "fisik_imt": "numeric",
+    "fisik_tb": "numeric",
+    "gcs": "numeric",
+    "hr": "numeric",
+    "lab_asam_urat": "numeric",
+    "lab_eritrosit": "numeric",
+    "lab_gds": "numeric",
+    "lab_hb": "numeric",
+    "lab_hba1c": "numeric",
+    "lab_ht": "numeric",
+    "lab_inr": "numeric",
+    "lab_kalium": "numeric",
+    "lab_kolesterol_total": "numeric",
+    "lab_kreatinin": "numeric",
+    "lab_ldl": "numeric",
+    "lab_leukosit": "numeric",
+    "lab_natrium": "numeric",
+    "lab_trigliserida": "numeric",
+    "lab_trombosit": "numeric",
+    "lab_ureum": "numeric",
+    "lama_rawat_hari": "numeric",
+    "rr": "numeric",
+    "spo2": "numeric",
+    "suhu": "numeric",
+    "suhu_tertinggi": "numeric",
+    "td_diastol": "numeric",
+    "td_sistol": "numeric"
+  },
   "categories": {
     "Demografi": {
-      "fields": ["demo_age", "demo_gender", "jenis_kelamin"],
+      "fields": [
+        "demo_age",
+        "demo_gender",
+        "jenis_kelamin"
+      ],
       "type": "builtin",
       "extractor": "demographics",
       "desc": "Usia + Jenis Kelamin dari Resume"
     },
-
     "Diagnosis Stroke": {
-      "fields": ["stroke_type", "diagnosis_text"],
+      "fields": [
+        "stroke_type",
+        "diagnosis_text"
+      ],
       "type": "builtin",
       "extractor": "diagnosis",
       "desc": "Infark / Hemoragik / Mixed + teks diagnosis lengkap"
     },
-
     "GCS": {
-      "fields": ["gcs"],
+      "fields": [
+        "gcs"
+      ],
       "type": "builtin",
       "extractor": "gcs",
       "desc": "Glasgow Coma Scale dari CPPT IGD/Ranap"
     },
-
     "Vital Sign": {
-      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "fields": [
+        "td_sistol",
+        "td_diastol",
+        "hr",
+        "rr",
+        "suhu",
+        "spo2"
+      ],
       "type": "builtin",
       "extractor": "vitals",
       "desc": "TD, HR, RR, Suhu, SpO2 dari CPPT IGD"
     },
-
     "CT Scan": {
       "fields": [
-        "ct_documented", "ct_result", "ct_infark_lokasi",
-        "ct_aspects", "ct_perdarahan", "ct_midline_shift",
-        "ct_hidrosefalus", "ct_atrofi", "ct_tanggal"
+        "ct_documented",
+        "ct_result",
+        "ct_infark_lokasi",
+        "ct_aspects",
+        "ct_perdarahan",
+        "ct_midline_shift",
+        "ct_hidrosefalus",
+        "ct_atrofi",
+        "ct_tanggal"
       ],
       "type": "builtin",
       "extractor": "ct_scan",
       "desc": "Dokumentasi CT, lokasi infark, ASPECTS, perdarahan, midline shift, dll"
     },
-
     "Thorax": {
-      "fields": ["thorax_documented", "thorax_kesan", "thorax_tanggal"],
+      "fields": [
+        "thorax_documented",
+        "thorax_kesan",
+        "thorax_tanggal"
+      ],
       "type": "builtin",
       "extractor": "thorax",
       "desc": "Hasil foto thorax + kesan + tanggal"
     },
-
     "Laboratorium": {
       "fields": [
-        "lab_hb", "lab_leukosit", "lab_trombosit", "lab_gds",
-        "lab_ureum", "lab_kreatinin", "lab_ht", "lab_eritrosit",
-        "lab_natrium", "lab_kalium", "lab_asam_urat",
-        "lab_inr", "lab_ldl", "lab_kolesterol_total",
-        "lab_trigliserida", "lab_hba1c"
+        "lab_hb",
+        "lab_leukosit",
+        "lab_trombosit",
+        "lab_gds",
+        "lab_ureum",
+        "lab_kreatinin",
+        "lab_ht",
+        "lab_eritrosit",
+        "lab_natrium",
+        "lab_kalium",
+        "lab_asam_urat",
+        "lab_inr",
+        "lab_ldl",
+        "lab_kolesterol_total",
+        "lab_trigliserida",
+        "lab_hba1c"
       ],
       "type": "builtin",
       "extractor": "lab_values",
       "desc": "16 parameter lab: HB, Leukosit, Trombosit, GDS, Ureum, Kreatinin, INR, LDL, Kolesterol, Trigliserida, HBA1c"
     },
-
     "Tanggal Laboratorium": {
-      "fields": ["lab_tanggal_igd", "lab_tanggal_ranap", "lab_tanggal_pertama"],
+      "fields": [
+        "lab_tanggal_igd",
+        "lab_tanggal_ranap",
+        "lab_tanggal_pertama"
+      ],
       "type": "builtin",
       "extractor": "lab_dates",
       "desc": "Tanggal sampling lab IGD, Ranap, dan pertama"
     },
-
     "Demam": {
-      "fields": ["demam_saat_masuk", "demam_selama_rawat", "suhu_tertinggi"],
+      "fields": [
+        "demam_saat_masuk",
+        "demam_selama_rawat",
+        "suhu_tertinggi"
+      ],
       "type": "builtin",
       "extractor": "demam",
       "desc": "Tracking demam saat masuk & selama rawat + suhu tertinggi"
     },
-
     "Medikasi": {
       "fields": [
-        "med_antiplatelet", "med_antikoagulan", "med_statin",
-        "med_antihipertensi", "med_mannitol", "med_citicoline",
-        "med_ppi", "med_antibiotik",
-        "med_antiplatelet_detail", "med_antikoagulan_detail",
-        "med_statin_detail", "med_antihipertensi_detail",
-        "med_mannitol_detail", "med_citicoline_detail",
-        "med_ppi_detail", "med_antibiotik_detail"
+        "med_antiplatelet",
+        "med_antikoagulan",
+        "med_statin",
+        "med_antihipertensi",
+        "med_mannitol",
+        "med_citicoline",
+        "med_ppi",
+        "med_antibiotik",
+        "med_antiplatelet_detail",
+        "med_antikoagulan_detail",
+        "med_statin_detail",
+        "med_antihipertensi_detail",
+        "med_mannitol_detail",
+        "med_citicoline_detail",
+        "med_ppi_detail",
+        "med_antibiotik_detail"
       ],
       "type": "builtin",
       "extractor": "medications",
       "desc": "8 kategori obat dasar + detail dosis per kategori"
     },
-
     "Faktor Risiko": {
       "fields": [
-        "rf_hipertensi", "rf_diabetes", "rf_dislipidemia",
-        "rf_jantung", "rf_stroke_sebelumnya", "rf_merokok",
-        "rf_atrial_fibrilasi", "rf_obesitas", "rpd_text"
+        "rf_hipertensi",
+        "rf_diabetes",
+        "rf_dislipidemia",
+        "rf_jantung",
+        "rf_stroke_sebelumnya",
+        "rf_merokok",
+        "rf_atrial_fibrilasi",
+        "rf_obesitas",
+        "rpd_text"
       ],
       "type": "builtin",
       "extractor": "risk_factors",
       "desc": "Hipertensi, DM, Dislipidemia, Jantung, Stroke prev, Merokok, AF, Obesitas, RPD"
     },
-
     "Tindakan Klinis": {
       "fields": [
-        "act_konsul_neurologi", "act_konsul_bedah_saraf",
-        "act_konsul_jantung", "act_rawat_icu_hcu",
-        "act_fisioterapi", "act_konsul_gizi",
-        "act_skrining_menelan", "act_edukasi_keluarga"
+        "act_konsul_neurologi",
+        "act_konsul_bedah_saraf",
+        "act_konsul_jantung",
+        "act_rawat_icu_hcu",
+        "act_fisioterapi",
+        "act_konsul_gizi",
+        "act_skrining_menelan",
+        "act_edukasi_keluarga"
       ],
       "type": "builtin",
       "extractor": "actions",
       "desc": "Konsul neuro, bedah saraf, jantung, fisioterapi, gizi, skrining menelan, edukasi"
     },
-
     "Outcome": {
       "fields": [
-        "cara_keluar", "kondisi_pulang", "rencana_kontrol",
-        "lama_rawat_hari", "keterangan_pulang"
+        "cara_keluar",
+        "kondisi_pulang",
+        "rencana_kontrol",
+        "lama_rawat_hari",
+        "keterangan_pulang"
       ],
       "type": "builtin",
       "extractor": "outcome",
       "desc": "Cara keluar, kondisi pulang, kontrol, LOS, keterangan"
     },
-
     "Pengaturan": {
-      "fields": ["setting_ruang_rawat", "setting_kelas"],
+      "fields": [
+        "setting_ruang_rawat",
+        "setting_kelas"
+      ],
       "type": "keyword",
       "keywords": {
-        "setting_ruang_rawat": ["rawat inap", "rawat jalan", "icu", "hcu", "iccu", "stroke unit"],
-        "setting_kelas": ["kelas", "ruang", "bangsal"]
+        "setting_ruang_rawat": [
+          "rawat inap",
+          "rawat jalan",
+          "icu",
+          "hcu",
+          "iccu",
+          "stroke unit"
+        ],
+        "setting_kelas": [
+          "kelas",
+          "ruang",
+          "bangsal"
+        ]
       },
       "desc": "Informasi ruang rawat & kelas pasien"
     },
-
     "Pemeriksaan Fisik": {
-      "fields": ["fisik_kesadaran", "fisik_bb", "fisik_tb", "fisik_imt"],
+      "fields": [
+        "fisik_kesadaran",
+        "fisik_bb",
+        "fisik_tb",
+        "fisik_imt"
+      ],
       "type": "keyword",
       "keywords": {
-        "fisik_kesadaran": ["kesadaran", "compos mentis", "somnolen", "sopor", "koma"],
-        "fisik_bb": ["bb", "berat badan"],
-        "fisik_tb": ["tb", "tinggi badan"],
-        "fisik_imt": ["imt"]
+        "fisik_kesadaran": [
+          "kesadaran",
+          "compos mentis",
+          "somnolen",
+          "sopor",
+          "koma"
+        ],
+        "fisik_bb": [
+          "bb",
+          "berat badan"
+        ],
+        "fisik_tb": [
+          "tb",
+          "tinggi badan"
+        ],
+        "fisik_imt": [
+          "imt"
+        ]
       },
       "desc": "Pemeriksaan fisik: kesadaran, BB, TB, IMT"
     }

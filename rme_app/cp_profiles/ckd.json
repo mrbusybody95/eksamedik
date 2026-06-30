@@ -1,0 +1,167 @@
+{
+  "_comment": "Clinical Pathway Standard: CKD / Gagal Ginjal Kronis",
+  "name": "CKD",
+  "disease_profile_ref": "ckd",
+  "version": "1.0",
+  "los_target": {
+    "min": 3,
+    "max": 7
+  },
+  "standards": {
+    "Diagnostik Wajib": [
+      {
+        "field": "lab_kreatinin",
+        "expected": "ada",
+        "label": "Kreatinin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_ureum",
+        "expected": "ada",
+        "label": "Ureum",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "egfr_value",
+        "expected": "ada",
+        "label": "eGFR",
+        "severity": "wajib",
+        "category": "Fungsi Ginjal"
+      },
+      {
+        "field": "lab_hb",
+        "expected": "ada",
+        "label": "Hemoglobin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_albumin",
+        "expected": "ada",
+        "label": "Albumin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "elek_natrium",
+        "expected": "ada",
+        "label": "Natrium",
+        "severity": "wajib",
+        "category": "Elektrolit"
+      },
+      {
+        "field": "elek_kalium",
+        "expected": "ada",
+        "label": "Kalium",
+        "severity": "wajib",
+        "category": "Elektrolit"
+      },
+      {
+        "field": "proteinuria",
+        "expected": "ada",
+        "label": "Proteinuria",
+        "severity": "rekomendasi",
+        "category": "Fungsi Ginjal"
+      },
+      {
+        "field": "lab_kolesterol_total",
+        "expected": "ada",
+        "label": "Kolesterol Total",
+        "severity": "rekomendasi",
+        "category": "Laboratorium"
+      }
+    ],
+    "Medikasi Wajib": [
+      {
+        "field": "med_antihipertensi",
+        "expected": "ada",
+        "label": "Antihipertensi",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_esa",
+        "expected": "ada",
+        "label": "ESA (Erythropoiesis Stimulating Agent)",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_besi",
+        "expected": "ada",
+        "label": "Suplemen Besi",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_kalsium_karbonat",
+        "expected": "ada",
+        "label": "Kalsium Karbonat (Fosfat Binder)",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_vitamin_d",
+        "expected": "ada",
+        "label": "Vitamin D",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      }
+    ],
+    "Tindakan Wajib": [
+      {
+        "field": "act_konsul_nefrologi",
+        "expected": "ada",
+        "label": "Konsul Nefrologi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_konsul_gizi",
+        "expected": "ada",
+        "label": "Konsul Gizi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_edukasi_pasien",
+        "expected": "ada",
+        "label": "Edukasi Pasien",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_vaksinasi",
+        "expected": "ada",
+        "label": "Vaksinasi Hepatitis B",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      }
+    ],
+    "Outcome": [
+      {
+        "field": "cara_keluar",
+        "expected": "ada",
+        "label": "Cara Keluar",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "kondisi_pulang",
+        "expected": "ada",
+        "label": "Kondisi Pulang",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "lama_rawat_hari",
+        "expected": "ada",
+        "label": "Lama Rawat",
+        "severity": "wajib",
+        "category": "Outcome"
+      }
+    ]
+  }
+}

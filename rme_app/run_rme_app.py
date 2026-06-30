@@ -34,6 +34,17 @@ from extraction_engine import (
     _CORE_AVAILABLE,
 )
 
+# ── Import CP Variance analysis ──
+from analytics.cp_variance import (
+    list_cp_profiles,
+    load_cp_profile,
+    find_cp_for_disease,
+    compare_patient,
+    analyze_all_patients,
+    AggregateReport,
+    VarianceType,
+)
+
 # ── Import pipeline_core (anonimisasi + utilitas) ──
 _CORE_DIR = Path(__file__).resolve().parent.parent / "cp_stroke_app"
 if str(_CORE_DIR) not in sys.path:
@@ -178,6 +189,7 @@ st.sidebar.markdown("---")
 tabs = [
     "🏠 Beranda",
     "📂 Anonimisasi & Ekstraksi",
+    "📋 Clinical Pathway",
     "👥 Data Staf RS",
     "💊 Database Obat",
     "📊 Laporan",
@@ -559,6 +571,208 @@ elif active_tab == "📂 Anonimisasi & Ekstraksi":
                                         st.caption(f"  **{f}**: {dict(vc)}")
                 else:
                     st.warning("⚠️ Tidak ada data yang berhasil diekstrak.")
+
+
+# ================================================================
+# TAB: CLINICAL PATHWAY VARIANCE
+# ================================================================
+
+elif active_tab == "📋 Clinical Pathway":
+    st.title("📋 Clinical Pathway — Deteksi Varians")
+    st.caption("Bandingkan hasil ekstraksi aktual vs standar CP. Identifikasi varians + penyebab.")
+
+    # ── CP Profile selector ──
+    cp_profiles = list_cp_profiles()
+    cp_names = [p["name"] for p in cp_profiles]
+
+    if not cp_names:
+        st.warning("⚠️ Tidak ada CP profiles ditemukan di `cp_profiles/`.")
+        st.stop()
+
+    col_cp, col_info = st.columns([1, 2])
+    with col_cp:
+        selected_cp_name = st.selectbox("📋 Standar CP", options=cp_names, key="cp_selector")
+    with col_info:
+        cp_meta = next((p for p in cp_profiles if p["name"] == selected_cp_name), None)
+        if cp_meta:
+            los = cp_meta.get("los_target", {})
+            st.info(f"**{cp_meta['name']}** — {cp_meta['standard_count']} standar | LOS target: {los.get('min', '?')}-{los.get('max', '?')} hari")
+
+    try:
+        cp_profile = load_cp_profile(selected_cp_name)
+    except Exception as e:
+        st.error(f"❌ Error load CP profile: {e}")
+        st.stop()
+
+    # ── Data source: use extraction results from session_state ──
+    results = st.session_state.get("extract_results", [])
+
+    if not results:
+        st.warning("⚠️ Belum ada data ekstraksi. Jalankan ekstraksi di tab **📂 Anonimisasi & Ekstraksi** terlebih dahulu.")
+        st.markdown("---")
+        st.markdown("### 📋 Standar CP yang Berlaku")
+        for section, items in cp_profile.get("standards", {}).items():
+            with st.expander(f"**{section}** ({len(items)} standar)"):
+                for item in items:
+                    sev_icon = "🔴" if item.get("severity") == "wajib" else "🟡"
+                    st.markdown(f"- {sev_icon} **{item['label']}** — field: `{item['field']}`, expected: `{item['expected']}`")
+        st.stop()
+
+    # ── Run variance analysis ──
+    st.success(f"📊 **{len(results)}** pasien tersedia dari hasil ekstraksi.")
+
+    if st.button("🔍 Jalankan Analisis Varians", type="primary", use_container_width=True, key="run_cp_variance"):
+        agg_report = analyze_all_patients(results, cp_profile)
+        st.session_state["cp_agg_report"] = agg_report
+
+    agg_report = st.session_state.get("cp_agg_report")
+    if agg_report is None:
+        st.info("Klik tombol di atas untuk menjalankan analisis varians.")
+        st.stop()
+
+    # ── Aggregate Dashboard ──
+    st.markdown("---")
+    st.subheader("📊 Dashboard Agregat")
+
+    m1, m2, m3, m4, m5 = st.columns(5)
+    with m1:
+        st.metric("👥 Pasien", agg_report.patient_count)
+    with m2:
+        st.metric("✅ Compliance Rata-rata", f"{agg_report.avg_compliance_rate:.1f}%")
+    with m3:
+        st.metric("⚠️ Total Deviasi", agg_report.total_deviations)
+    with m4:
+        st.metric("❌ Total Missing", agg_report.total_missing)
+    with m5:
+        los_sum = agg_report.los_summary()
+        if los_sum["mean"] is not None:
+            st.metric("📅 LOS Rata-rata", f"{los_sum['mean']} hari")
+        else:
+            st.metric("📅 LOS Rata-rata", "—")
+
+    # ── LOS Summary ──
+    if los_sum["count"] > 0:
+        st.markdown("#### 📈 Distribusi LOS")
+        los_c1, los_c2, los_c3, los_c4 = st.columns(4)
+        with los_c1:
+            st.metric("Dalam Target", los_sum["within_target"])
+        with los_c2:
+            st.metric("Di Atas Target", los_sum["above_target"])
+        with los_c3:
+            st.metric("Di Bawah Target", los_sum["below_target"])
+        with los_c4:
+            st.metric("Median LOS", f"{los_sum['median']} hari")
+
+    # ── Per-Field Compliance Table ──
+    st.markdown("---")
+    st.subheader("📋 Compliance Per Field (Semua Pasien)")
+
+    field_summary = agg_report.field_compliance_summary()
+    if field_summary:
+        rows = []
+        for f, fs in sorted(field_summary.items(), key=lambda x: x[1]["compliance_pct"]):
+            rows.append({
+                "Field": fs["label"],
+                "Severity": "🔴 wajib" if fs["severity"] == "wajib" else "🟡 rekomendasi",
+                "Section": fs["section"],
+                "Compliant": fs["compliant"],
+                "Deviation": fs["deviation"],
+                "Missing": fs["missing"],
+                "Compliance %": fs["compliance_pct"],
+            })
+        df_fields = pd.DataFrame(rows)
+        st.dataframe(df_fields, use_container_width=True, hide_index=True)
+
+        # Highlight low compliance
+        low_comp = df_fields[df_fields["Compliance %"] < 80]
+        if not low_comp.empty:
+            st.warning(f"⚠️ **{len(low_comp)}** field dengan compliance < 80%:")
+            for _, row in low_comp.iterrows():
+                st.caption(f"  • {row['Field']} ({row['Severity']}): {row['Compliance %']}%")
+
+    # ── Per-Patient Detail ──
+    st.markdown("---")
+    st.subheader("👤 Detail Per Pasien")
+
+    for pr in agg_report.patient_reports:
+        wajib_missing = pr.wajib_missing
+        status_icon = "✅" if not wajib_missing else "⚠️"
+
+        with st.expander(f"{status_icon} **{pr.patient_id}** — Compliance: {pr.compliance_rate:.1f}% | Deviasi: {pr.deviation_count} | Missing: {pr.missing_count}"):
+            # Summary metrics
+            pc1, pc2, pc3, pc4 = st.columns(4)
+            with pc1:
+                st.metric("Compliant", pr.compliant_count)
+            with pc2:
+                st.metric("Deviation", pr.deviation_count)
+            with pc3:
+                st.metric("Missing", pr.missing_count)
+            with pc4:
+                if pr.los_actual is not None:
+                    st.metric("LOS", f"{pr.los_actual:.0f} hari", delta=pr.los_variance)
+
+            # Variance table
+            if pr.variances:
+                var_rows = [v.to_dict() for v in pr.variances]
+                df_var = pd.DataFrame(var_rows)
+                # Color-code by variance_type
+                st.dataframe(
+                    df_var[["label", "severity", "section", "expected", "actual", "variance_type", "note"]],
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "label": "Standar",
+                        "severity": "Severity",
+                        "section": "Section",
+                        "expected": "Expected",
+                        "actual": "Actual",
+                        "variance_type": st.column_config.TextColumn("Status", help="compliant/deviation/missing/not_assessable"),
+                        "note": "Keterangan",
+                    },
+                )
+
+            # Wajib missing alerts
+            if wajib_missing:
+                st.error(f"🔴 **{len(wajib_missing)}** standar WAJIB belum terpenuhi:")
+                for w in wajib_missing:
+                    st.caption(f"  • {w.label}: {w.note}")
+
+    # ── Download Report ──
+    st.markdown("---")
+    st.subheader("💾 Unduh Laporan Varians")
+
+    dl_col1, dl_col2 = st.columns(2)
+    with dl_col1:
+        # Per-patient summary CSV
+        summary_rows = [pr.to_summary_dict() for pr in agg_report.patient_reports]
+        df_summary = pd.DataFrame(summary_rows)
+        csv_summary = df_summary.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "📥 Ringkasan Per Pasien (CSV)",
+            data=csv_summary,
+            file_name=f"cp_variance_summary_{selected_cp_name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+
+    with dl_col2:
+        # All variances detail CSV
+        all_var_rows = []
+        for pr in agg_report.patient_reports:
+            for v in pr.variances:
+                row = v.to_dict()
+                row["patient_id"] = pr.patient_id
+                all_var_rows.append(row)
+        if all_var_rows:
+            df_detail = pd.DataFrame(all_var_rows)
+            csv_detail = df_detail.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                "📥 Detail Semua Varians (CSV)",
+                data=csv_detail,
+                file_name=f"cp_variance_detail_{selected_cp_name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
 
 # ================================================================

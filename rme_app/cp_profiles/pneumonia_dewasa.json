@@ -1,0 +1,139 @@
+{
+  "_comment": "Clinical Pathway Standard: Pneumonia Dewasa (CAP/HAP)",
+  "name": "Pneumonia Dewasa",
+  "disease_profile_ref": "pneumonia_dewasa",
+  "version": "1.0",
+  "los_target": {
+    "min": 5,
+    "max": 7
+  },
+  "standards": {
+    "Diagnostik Wajib": [
+      {
+        "field": "thorax_documented",
+        "expected": "ada",
+        "label": "Foto Thorax PA",
+        "severity": "wajib",
+        "category": "Thorax"
+      },
+      {
+        "field": "lab_hb",
+        "expected": "ada",
+        "label": "Hemoglobin",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_leukosit",
+        "expected": "ada",
+        "label": "Leukosit",
+        "severity": "wajib",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_crp",
+        "expected": "ada",
+        "label": "CRP",
+        "severity": "rekomendasi",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "lab_pct",
+        "expected": "ada",
+        "label": "Procalcitonin",
+        "severity": "rekomendasi",
+        "category": "Laboratorium"
+      },
+      {
+        "field": "kultur_darah",
+        "expected": "ada",
+        "label": "Kultur Darah",
+        "severity": "rekomendasi",
+        "category": "Kultur"
+      }
+    ],
+    "Medikasi Wajib": [
+      {
+        "field": "med_antibiotik",
+        "expected": "ada",
+        "label": "Antibiotik",
+        "severity": "wajib",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_antipiretik",
+        "expected": "ada",
+        "label": "Antipiretik",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_bronkodilator",
+        "expected": "ada",
+        "label": "Bronkodilator",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      },
+      {
+        "field": "med_mukolitik",
+        "expected": "ada",
+        "label": "Mukolitik",
+        "severity": "rekomendasi",
+        "category": "Medikasi"
+      }
+    ],
+    "Tindakan Wajib": [
+      {
+        "field": "act_oksigen_terapi",
+        "expected": "ada",
+        "label": "Oksigen Terapi",
+        "severity": "wajib",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_pengambilan_sputum",
+        "expected": "ada",
+        "label": "Pengambilan Sputum",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_konsul_gizi",
+        "expected": "ada",
+        "label": "Konsul Gizi",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      },
+      {
+        "field": "act_edukasi_keluarga",
+        "expected": "ada",
+        "label": "Edukasi Keluarga",
+        "severity": "rekomendasi",
+        "category": "Tindakan"
+      }
+    ],
+    "Outcome": [
+      {
+        "field": "cara_keluar",
+        "expected": "ada",
+        "label": "Cara Keluar",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "kondisi_pulang",
+        "expected": "ada",
+        "label": "Kondisi Pulang",
+        "severity": "wajib",
+        "category": "Outcome"
+      },
+      {
+        "field": "lama_rawat_hari",
+        "expected": "ada",
+        "label": "Lama Rawat",
+        "severity": "wajib",
+        "category": "Outcome"
+      }
+    ]
+  }
+}

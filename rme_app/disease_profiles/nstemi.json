@@ -1,22 +1,71 @@
 {
   "_comment": "Disease Profile: NSTEMI — Non-ST Elevation Myocardial Infarction",
   "_version": "1.0",
-
   "name": "NSTEMI",
   "version": "1.0",
   "description": "Ekstraksi data NSTEMI sesuai Clinical Pathway Kemenkes. Troponin, ECG, kateterisasi, PCI, TIMI/GRACE score.",
   "drug_profile": "nstemi.json",
-
+  "field_types": {
+    "bnp": "numeric",
+    "ck_mb": "numeric",
+    "d_dimer": "numeric",
+    "demo_age": "numeric",
+    "ecg_heart_rate": "numeric",
+    "echo_ef": "numeric",
+    "echo_lvef": "numeric",
+    "fisik_bb": "numeric",
+    "fisik_imt": "numeric",
+    "fisik_tb": "numeric",
+    "gcs": "numeric",
+    "grace_score": "numeric",
+    "hr": "numeric",
+    "hs_trop": "numeric",
+    "lab_alt": "numeric",
+    "lab_ast": "numeric",
+    "lab_gds": "numeric",
+    "lab_hb": "numeric",
+    "lab_hba1c": "numeric",
+    "lab_hdl": "numeric",
+    "lab_inr": "numeric",
+    "lab_kalium": "numeric",
+    "lab_kolesterol_total": "numeric",
+    "lab_kreatinin": "numeric",
+    "lab_ldl": "numeric",
+    "lab_leukosit": "numeric",
+    "lab_natrium": "numeric",
+    "lab_trigliserida": "numeric",
+    "lab_trombosit": "numeric",
+    "lab_ureum": "numeric",
+    "lama_rawat_hari": "numeric",
+    "nt_probnp": "numeric",
+    "rr": "numeric",
+    "spo2": "numeric",
+    "suhu": "numeric",
+    "suhu_tertinggi": "numeric",
+    "td_diastol": "numeric",
+    "td_sistol": "numeric",
+    "timi_score": "numeric",
+    "troponin_i": "numeric",
+    "troponin_t": "numeric"
+  },
   "categories": {
     "Demografi": {
-      "fields": ["demo_age", "demo_gender", "jenis_kelamin"],
+      "fields": [
+        "demo_age",
+        "demo_gender",
+        "jenis_kelamin"
+      ],
       "type": "builtin",
       "extractor": "demographics",
       "desc": "Usia + Jenis Kelamin"
     },
-
     "Diagnosis": {
-      "fields": ["diagnosis_utama", "diagnosis_sekunder", "aks_kategori", "icd_code"],
+      "fields": [
+        "diagnosis_utama",
+        "diagnosis_sekunder",
+        "aks_kategori",
+        "icd_code"
+      ],
       "type": "regex",
       "patterns": {
         "diagnosis_utama": "(?i)diagnos[aei]\\s*(?:utama)?\\s*[:=]?\\s*(.{5,200})",
@@ -24,28 +73,44 @@
         "aks_kategori": "(?i)(NSTEMI|NSTE-ACS|STEMI|ACS|unstable\\s*angina|UA|acute\\s*coronary|sindroma\\s*koroner\\s*akut)",
         "icd_code": "(?i)I21\\.[0-9]|I20\\.[0-9]|I24|I25"
       },
-      "doc_types": ["resume", "cppt_igd", "cppt_ranap"],
+      "doc_types": [
+        "resume",
+        "cppt_igd",
+        "cppt_ranap"
+      ],
       "desc": "NSTEMI / STEMI / UA / ACS + kode ICD"
     },
-
     "Vital Sign": {
-      "fields": ["td_sistol", "td_diastol", "hr", "rr", "suhu", "spo2"],
+      "fields": [
+        "td_sistol",
+        "td_diastol",
+        "hr",
+        "rr",
+        "suhu",
+        "spo2"
+      ],
       "type": "builtin",
       "extractor": "vitals",
       "desc": "TD, HR, RR, Suhu, SpO2"
     },
-
     "GCS": {
-      "fields": ["gcs"],
+      "fields": [
+        "gcs"
+      ],
       "type": "builtin",
       "extractor": "gcs",
       "desc": "Glasgow Coma Scale"
     },
-
     "Cardiac Biomarkers": {
       "fields": [
-        "troponin_t", "troponin_i", "troponin_kualitatif",
-        "ck_mb", "bnp", "nt_probnp", "d_dimer", "hs_trop"
+        "troponin_t",
+        "troponin_i",
+        "troponin_kualitatif",
+        "ck_mb",
+        "bnp",
+        "nt_probnp",
+        "d_dimer",
+        "hs_trop"
       ],
       "type": "regex",
       "patterns": {
@@ -58,34 +123,58 @@
         "d_dimer": "(?i)(?:D[-\\s]?dimer|DDimer)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)",
         "hs_trop": "(?i)(?:hs[-\\s]?troponin|hsTnT|hsTnI|high.sensitivity.troponin)\\s*[:=]?\\s*([<>]?\\s*\\d+[.,]?\\d*)"
       },
-      "doc_types": ["lab", "cppt_igd", "cppt_ranap"],
+      "doc_types": [
+        "lab",
+        "cppt_igd",
+        "cppt_ranap"
+      ],
       "desc": "Troponin T/I, CK-MB, BNP, NT-proBNP, D-dimer, hs-troponin"
     },
-
     "Laboratorium": {
       "fields": [
-        "lab_hb", "lab_leukosit", "lab_trombosit", "lab_gds",
-        "lab_ureum", "lab_kreatinin", "lab_natrium", "lab_kalium",
-        "lab_kolesterol_total", "lab_ldl", "lab_hdl", "lab_trigliserida",
-        "lab_hba1c", "lab_ast", "lab_alt", "lab_inr"
+        "lab_hb",
+        "lab_leukosit",
+        "lab_trombosit",
+        "lab_gds",
+        "lab_ureum",
+        "lab_kreatinin",
+        "lab_natrium",
+        "lab_kalium",
+        "lab_kolesterol_total",
+        "lab_ldl",
+        "lab_hdl",
+        "lab_trigliserida",
+        "lab_hba1c",
+        "lab_ast",
+        "lab_alt",
+        "lab_inr"
       ],
       "type": "builtin",
       "extractor": "lab_values",
       "desc": "HB, leukosit, trombosit, GDS, renal, lipid, HBA1c, SGOT/SGPT, INR"
     },
-
     "Tanggal Laboratorium": {
-      "fields": ["lab_tanggal_igd", "lab_tanggal_ranap", "lab_tanggal_pertama"],
+      "fields": [
+        "lab_tanggal_igd",
+        "lab_tanggal_ranap",
+        "lab_tanggal_pertama"
+      ],
       "type": "builtin",
       "extractor": "lab_dates",
       "desc": "Tanggal sampling lab"
     },
-
     "ECG": {
       "fields": [
-        "ecg_ada", "ecg_st_depresi", "ecg_t_inversi", "ecg_st_elevasi",
-        "ecg_aritmia", "ecg_lbbb", "ecg_q_wave", "ecg_sinusal",
-        "ecg_heart_rate", "ecg_kesan"
+        "ecg_ada",
+        "ecg_st_depresi",
+        "ecg_t_inversi",
+        "ecg_st_elevasi",
+        "ecg_aritmia",
+        "ecg_lbbb",
+        "ecg_q_wave",
+        "ecg_sinusal",
+        "ecg_heart_rate",
+        "ecg_kesan"
       ],
       "type": "regex",
       "patterns": {
@@ -100,14 +189,23 @@
         "ecg_heart_rate": "(?i)(?:HR|heart\\s*rate|denyut|nadi)\\s*[:=]?\\s*(\\d{2,3})\\s*(?:bpm|x/menit)?",
         "ecg_kesan": "(?i)(?:kesan|interpretasi|hasil\\s*EKG|ECG\\s*result)\\s*(?:EKG|ECG)?\\s*[:=]?\\s*(.{5,200})"
       },
-      "doc_types": ["cppt_igd", "cppt_ranap", "resume"],
+      "doc_types": [
+        "cppt_igd",
+        "cppt_ranap",
+        "resume"
+      ],
       "desc": "EKG findings: ST depresi, T inversi, aritmia, LBBB, Q wave"
     },
-
     "Echocardiography": {
       "fields": [
-        "echo_ada", "echo_ef", "echo_lvef", "echo_wall_motion",
-        "echo_valvulopati", "echo_rvg", "echo_perikardial", "echo_kesan"
+        "echo_ada",
+        "echo_ef",
+        "echo_lvef",
+        "echo_wall_motion",
+        "echo_valvulopati",
+        "echo_rvg",
+        "echo_perikardial",
+        "echo_kesan"
       ],
       "type": "regex",
       "patterns": {
@@ -120,12 +218,22 @@
         "echo_perikardial": "(?i)(?:perikard|efusi\\s*perikard)\\s*[:=]?\\s*(.{3,100})",
         "echo_kesan": "(?i)(?:kesan|kesimpulan|hasil\\s*echo)\\s*(?:echo)?\\s*[:=]?\\s*(.{5,200})"
       },
-      "doc_types": ["radiology", "cppt_ranap", "resume"],
+      "doc_types": [
+        "radiology",
+        "cppt_ranap",
+        "resume"
+      ],
       "desc": "Echocardiography: EF, wall motion, valvulopati, perikardial"
     },
-
     "Skor Risiko": {
-      "fields": ["timi_score", "timi_kategori", "grace_score", "grace_kategori", "killip_class", "nyha_class"],
+      "fields": [
+        "timi_score",
+        "timi_kategori",
+        "grace_score",
+        "grace_kategori",
+        "killip_class",
+        "nyha_class"
+      ],
       "type": "regex",
       "patterns": {
         "timi_score": "(?i)TIMI\\s*(?:score)?\\s*[:=]?\\s*(\\d{1,2})",
@@ -135,16 +243,30 @@
         "killip_class": "(?i)(?:Killip|killip)\\s*(?:class|kelas|kategori)?\\s*[:=]?\\s*([IVX]+|\\d+)",
         "nyha_class": "(?i)NYHA\\s*(?:class|kelas)?\\s*[:=]?\\s*([IVX]+|\\d+)"
       },
-      "doc_types": ["cppt_igd", "cppt_ranap", "resume"],
+      "doc_types": [
+        "cppt_igd",
+        "cppt_ranap",
+        "resume"
+      ],
       "desc": "TIMI score, GRACE score, Killip class, NYHA class"
     },
-
     "Kateterisasi & PCI": {
       "fields": [
-        "kath_ada", "kath_tanggal", "kath_koroner", "kath_lad",
-        "kath_lcx", "kath_rca", "kath_stenosis", "kath_trombus",
-        "pci_ada", "pci_tanggal", "pci_target", "pci_stent",
-        "pci_des", "pci_bms", "cabbage"
+        "kath_ada",
+        "kath_tanggal",
+        "kath_koroner",
+        "kath_lad",
+        "kath_lcx",
+        "kath_rca",
+        "kath_stenosis",
+        "kath_trombus",
+        "pci_ada",
+        "pci_tanggal",
+        "pci_target",
+        "pci_stent",
+        "pci_des",
+        "pci_bms",
+        "cabbage"
       ],
       "type": "regex",
       "patterns": {
@@ -164,84 +286,177 @@
         "pci_bms": "(?i)(BMS|bare.metal\\s*stent)",
         "cabbage": "(?i)(CABG|coronary\\s*artery\\s*bypass|bypass\\s*graft)"
       },
-      "doc_types": ["resume", "cppt_ranap", "radiology"],
+      "doc_types": [
+        "resume",
+        "cppt_ranap",
+        "radiology"
+      ],
       "desc": "Kateterisasi koroner, PCI/PTCA, stent DES/BMS, CABG"
     },
-
     "Demam": {
-      "fields": ["demam_saat_masuk", "demam_selama_rawat", "suhu_tertinggi"],
+      "fields": [
+        "demam_saat_masuk",
+        "demam_selama_rawat",
+        "suhu_tertinggi"
+      ],
       "type": "builtin",
       "extractor": "demam",
       "desc": "Tracking demam"
     },
-
     "Medikasi": {
       "fields": [
-        "med_antiplatelet", "med_antikoagulan", "med_statin",
-        "med_beta_blocker", "med_acei_arb", "med_nitrat",
-        "med_ppi", "med_diuretik", "med_analgesik",
-        "med_antiplatelet_detail", "med_antikoagulan_detail",
-        "med_statin_detail", "med_beta_blocker_detail",
-        "med_acei_arb_detail", "med_nitrat_detail",
-        "med_ppi_detail", "med_diuretik_detail", "med_analgesik_detail"
+        "med_antiplatelet",
+        "med_antikoagulan",
+        "med_statin",
+        "med_beta_blocker",
+        "med_acei_arb",
+        "med_nitrat",
+        "med_ppi",
+        "med_diuretik",
+        "med_analgesik",
+        "med_antiplatelet_detail",
+        "med_antikoagulan_detail",
+        "med_statin_detail",
+        "med_beta_blocker_detail",
+        "med_acei_arb_detail",
+        "med_nitrat_detail",
+        "med_ppi_detail",
+        "med_diuretik_detail",
+        "med_analgesik_detail"
       ],
       "type": "builtin",
       "extractor": "medications",
       "desc": "DAPT, antikoagulan, statin, beta-blocker, ACEi/ARB, nitrat, PPI, diuretik, analgesik + detail"
     },
-
     "Faktor Risiko": {
       "fields": [
-        "rf_hipertensi", "rf_diabetes", "rf_dislipidemia",
-        "rf_merokok", "rf_jantung", "rf_stroke_sebelumnya",
-        "rf_obesitas", "rf_gagal_ginjal", "rf_riwayat_keluarga",
-        "rf_atrial_fibrilasi", "rpd_text"
+        "rf_hipertensi",
+        "rf_diabetes",
+        "rf_dislipidemia",
+        "rf_merokok",
+        "rf_jantung",
+        "rf_stroke_sebelumnya",
+        "rf_obesitas",
+        "rf_gagal_ginjal",
+        "rf_riwayat_keluarga",
+        "rf_atrial_fibrilasi",
+        "rpd_text"
       ],
       "type": "builtin",
       "extractor": "risk_factors",
       "desc": "Hipertensi, DM, Dislipidemia, Merokok, Jantung, Stroke prev, Obesitas, CKD, Riwayat keluarga, AF"
     },
-
     "Tindakan Klinis": {
       "fields": [
-        "act_kateterisasi", "act_pci", "act_cabbage",
-        "act_rawat_icu_iccu", "act_konsul_jantung",
-        "act_echocardiography", "act_edukasi_keluarga",
-        "act_rehabilitasi_jantung", "act_monitor_troponin"
+        "act_kateterisasi",
+        "act_pci",
+        "act_cabbage",
+        "act_rawat_icu_iccu",
+        "act_konsul_jantung",
+        "act_echocardiography",
+        "act_edukasi_keluarga",
+        "act_rehabilitasi_jantung",
+        "act_monitor_troponin"
       ],
       "type": "keyword",
       "keywords": {
-        "act_kateterisasi": ["kateterisasi", "catheterization", "coronary angiografi", "kardiak kateter"],
-        "act_pci": ["pci", "ptca", "angioplasti", "percutaneous coronary", "stent"],
-        "act_cabbage": ["cabg", "bypass graft", "coronary artery bypass"],
-        "act_rawat_icu_iccu": ["icu", "iccu", "intensive care", "coronary care", "hcu", "ccu"],
-        "act_konsul_jantung": ["konsul jantung", "konsul kardiologi", "kardiologi", "cardiology"],
-        "act_echocardiography": ["echo", "echokardiografi", "usg jantung", "echocardiography"],
-        "act_edukasi_keluarga": ["edukasi", "konseling", "penjelasan"],
-        "act_rehabilitasi_jantung": ["rehabilitasi jantung", "cardiac rehab", "jantung rehab"],
-        "act_monitor_troponin": ["monitor troponin", "serial troponin", "troponin serial", "repeat troponin"]
+        "act_kateterisasi": [
+          "kateterisasi",
+          "catheterization",
+          "coronary angiografi",
+          "kardiak kateter"
+        ],
+        "act_pci": [
+          "pci",
+          "ptca",
+          "angioplasti",
+          "percutaneous coronary",
+          "stent"
+        ],
+        "act_cabbage": [
+          "cabg",
+          "bypass graft",
+          "coronary artery bypass"
+        ],
+        "act_rawat_icu_iccu": [
+          "icu",
+          "iccu",
+          "intensive care",
+          "coronary care",
+          "hcu",
+          "ccu"
+        ],
+        "act_konsul_jantung": [
+          "konsul jantung",
+          "konsul kardiologi",
+          "kardiologi",
+          "cardiology"
+        ],
+        "act_echocardiography": [
+          "echo",
+          "echokardiografi",
+          "usg jantung",
+          "echocardiography"
+        ],
+        "act_edukasi_keluarga": [
+          "edukasi",
+          "konseling",
+          "penjelasan"
+        ],
+        "act_rehabilitasi_jantung": [
+          "rehabilitasi jantung",
+          "cardiac rehab",
+          "jantung rehab"
+        ],
+        "act_monitor_troponin": [
+          "monitor troponin",
+          "serial troponin",
+          "troponin serial",
+          "repeat troponin"
+        ]
       },
       "desc": "Kateterisasi, PCI, CABG, ICU/ICCU, echo, edukasi, rehab"
     },
-
     "Outcome": {
       "fields": [
-        "cara_keluar", "kondisi_pulang", "rencana_kontrol",
-        "lama_rawat_hari", "keterangan_pulang"
+        "cara_keluar",
+        "kondisi_pulang",
+        "rencana_kontrol",
+        "lama_rawat_hari",
+        "keterangan_pulang"
       ],
       "type": "builtin",
       "extractor": "outcome",
       "desc": "Cara keluar, kondisi pulang, kontrol, LOS, keterangan"
     },
-
     "Pemeriksaan Fisik": {
-      "fields": ["fisik_kesadaran", "fisik_bb", "fisik_tb", "fisik_imt"],
+      "fields": [
+        "fisik_kesadaran",
+        "fisik_bb",
+        "fisik_tb",
+        "fisik_imt"
+      ],
       "type": "keyword",
       "keywords": {
-        "fisik_kesadaran": ["kesadaran", "compos mentis", "somnolen", "sopor", "koma"],
-        "fisik_bb": ["bb", "berat badan"],
-        "fisik_tb": ["tb", "tinggi badan"],
-        "fisik_imt": ["imt", "bmi"]
+        "fisik_kesadaran": [
+          "kesadaran",
+          "compos mentis",
+          "somnolen",
+          "sopor",
+          "koma"
+        ],
+        "fisik_bb": [
+          "bb",
+          "berat badan"
+        ],
+        "fisik_tb": [
+          "tb",
+          "tinggi badan"
+        ],
+        "fisik_imt": [
+          "imt",
+          "bmi"
+        ]
       },
       "desc": "Pemeriksaan fisik: kesadaran, BB, TB, IMT"
     }

@@ -112,7 +112,7 @@ class TestRegexExtractor:
         }
         files = [{"text": "teks biasa tanpa pattern", "doc_type": "resume", "source_file": "x.txt"}]
         result = _extract_regex(files, category)
-        assert result["field_x"] == "unknown"
+        assert result["field_x"] is None  # TASK 4: not found → None, not "unknown"
     
     def test_regex_doc_type_filter(self, sample_resume_file, sample_igd_file):
         category = {
@@ -162,7 +162,7 @@ class TestKeywordExtractor:
             },
         }
         result = _extract_keyword([sample_resume_file], category)
-        assert result["has_hiv"] == "tidak"
+        assert result["has_hiv"] is None  # TASK 4: not found → None, not "tidak"
     
     def test_keyword_multiple_fields(self, patient_files):
         category = {
@@ -173,8 +173,8 @@ class TestKeywordExtractor:
             },
         }
         result = _extract_keyword(patient_files, category)
-        assert result["setting_icu"] in ("ada", "tidak")
-        assert result["setting_kelas"] in ("ada", "tidak")
+        assert result["setting_icu"] in ("ada", "tidak", None)  # TASK 4: None if not found
+        assert result["setting_kelas"] in ("ada", "tidak", None)
 
 
 # ================================================================
@@ -408,7 +408,8 @@ class TestWordBoundary:
         cat = {"fields": ["has_stroke"], "keywords": {"has_stroke": ["stroke"]}}
         result = _extract_keyword(files, cat)
         # "antistroke" contains "stroke" but \b should NOT match
-        assert result["has_stroke"] == "tidak", \
+        # TASK 4: not found → None, not "tidak"
+        assert result["has_stroke"] is None, \
             "False positive: 'stroke' matched inside 'antistroke'"
     
     def test_stroke_as_standalone_word(self):
