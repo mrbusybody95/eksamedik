@@ -15,9 +15,6 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
-import threading
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -135,8 +132,6 @@ if "staff_data" not in st.session_state:
     st.session_state.staff_data = load_staff_csv_data(DEFAULT_STAFF_CSV) if _CORE_AVAILABLE else []
 if "staff_csv_path" not in st.session_state:
     st.session_state.staff_csv_path = DEFAULT_STAFF_CSV
-if "processing" not in st.session_state:
-    st.session_state.processing = False
 if "active_profile" not in st.session_state:
     st.session_state.active_profile = None
 
@@ -306,9 +301,9 @@ elif active_tab == "📂 Anonimisasi & Ekstraksi":
                 else:
                     progress = ProgressState()
                     st.session_state.progress = progress
-                    st.session_state.processing = True
 
-                    def run():
+                    with st.status("🔒 Anonimisasi berjalan...", expanded=True) as status:
+                        progress_bar = st.progress(0, text="⏳ Memulai...")
                         try:
                             results = anonymize_folder(
                                 input_dir=input_dir,
@@ -319,33 +314,27 @@ elif active_tab == "📂 Anonimisasi & Ekstraksi":
                             )
                             st.session_state.anon_results = results
                             progress.status = "done"
+                            status.update(
+                                label=f"✅ Anonimisasi selesai — {len(results)} file",
+                                state="complete", expanded=True,
+                            )
                         except Exception as e:
                             progress.status = "error"
                             progress.errors.append(str(e))
-                        finally:
-                            st.session_state.processing = False
+                            status.update(label="❌ Anonimisasi gagal", state="error")
+                            results = []
 
-                    thread = threading.Thread(target=run, daemon=True)
-                    thread.start()
+                        progress_bar.progress(
+                            1.0,
+                            text=f"✅ {progress.current}/{progress.total} file selesai",
+                        )
 
-                    # Progress display
-                    placeholder = st.empty()
-                    while st.session_state.processing:
-                        p = st.session_state.progress
-                        if p.status == "running":
-                            placeholder.progress(
-                                p.current / max(p.total, 1),
-                                text=f"⏳ {p.current}/{p.total} file ({p.percent:.0f}%)",
-                            )
-                        time.sleep(0.5)
-                    placeholder.empty()
-
+                    # Results persist across reruns via session_state
                     p = st.session_state.progress
-                    if p.status == "done":
+                    if p.status == "done" and st.session_state.anon_results:
                         st.success(f"✅ Anonimisasi selesai! {p.total} file diproses.")
-                        if st.session_state.anon_results:
-                            df = pd.DataFrame([r.__dict__ for r in st.session_state.anon_results])
-                            st.dataframe(df, use_container_width=True)
+                        df = pd.DataFrame([r.__dict__ for r in st.session_state.anon_results])
+                        st.dataframe(df, use_container_width=True)
                     elif p.status == "error":
                         st.error(f"❌ Error: {p.errors}")
 
